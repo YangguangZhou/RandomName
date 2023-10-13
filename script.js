@@ -15,11 +15,11 @@ function readNamesFromFile() {
     const rollInterval = setInterval(() => {
       const randomIndex = Math.floor(Math.random() * names.length);
       nameDisplay.textContent = names[randomIndex];
-    }, 50);
+    }, 51);
   
     setTimeout(() => {
       clearInterval(rollInterval);
-    }, 2000);
+    }, Math.random() * 500 + 300);
   }
   
   // 页面加载完成后执行
