@@ -19,7 +19,7 @@ function readNamesFromFile() {
   
     setTimeout(() => {
       clearInterval(rollInterval);
-    }, Math.random() * 500 + 300);
+    }, Math.random() * 600 + 300);
   }
   
   // 页面加载完成后执行
