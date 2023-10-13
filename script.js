@@ -15,7 +15,7 @@ function readNamesFromFile() {
     const rollInterval = setInterval(() => {
       const randomIndex = Math.floor(Math.random() * names.length);
       nameDisplay.textContent = names[randomIndex];
-    }, 51);
+    }, 51.99);
   
     setTimeout(() => {
       clearInterval(rollInterval);
