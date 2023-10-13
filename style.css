@@ -7,6 +7,17 @@ h1 {
     color: #333333;
 }
 
+html {
+    overflow-y: scroll !important
+}
+
+html,
+body {
+    background-image: radial-gradient(circle at 28% 29%, #ededed06 0%, #ededed06 50%, #88888806 50%, #88888806 100%), radial-gradient(circle at 8% 78%, #9c9c9c06 0%, #9c9c9c06 50%, #25252506 50%, #25252506 100%), linear-gradient(90deg, #fff, #fff);
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
+
 #nameDisplay {
     font-size: 24px;
     margin-top: 50px;
