@@ -8,9 +8,8 @@ h1 {
 }
 
 #nameDisplay {
-    font-family: SimSun;
     font-size: 24px;
-    margin-top: 20px;
+    margin-top: 50px;
 }
 
 #startButton {
@@ -21,9 +20,8 @@ h1 {
     text-align: center;
     text-decoration: none;
     display: inline-block;
-    font-family: SimSun;
     font-size: 16px;
-    margin-top: 20px;
+    margin-top: 50px;
     cursor: pointer;
 }
 
