@@ -20,7 +20,7 @@ html {
 }
 
 #nameDisplay {
-    font-size: 24px;
+    font-size: 45px;
     margin-top: 50px;
 }
 
@@ -32,7 +32,7 @@ html {
     text-align: center;
     text-decoration: none;
     display: inline-block;
-    font-size: 16px;
+    font-size: 30px;
     margin-top: 50px;
 }
 
