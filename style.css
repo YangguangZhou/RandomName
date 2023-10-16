@@ -13,6 +13,7 @@ body {
 
 h1 {
     color: #333333;
+    font-size: 60px;
 }
 
 html {
@@ -20,8 +21,8 @@ html {
 }
 
 #nameDisplay {
-    font-size: 100px;
-    margin-top: 50px;
+    font-size: 50px;
+    margin-top: 80px;
 }
 
 #startButton {
@@ -33,6 +34,6 @@ html {
     text-decoration: none;
     display: inline-block;
     font-size: 30px;
-    margin-top: 50px;
+    margin-top: 80px;
 }
 
