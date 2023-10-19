@@ -5,15 +5,81 @@
     <title>点名器</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="icon" href="https://jerryz.com.cn/favicon.png">
-    <link rel="stylesheet" type="text/css" href="style.css">
 </head>
 
 <body>
+    <style>
+        @import url('https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css');
+
+        /* 默认样式 */
+        body {
+            background-color: #f5f5f5;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        h1 {
+            color: #222;
+            font: bold;
+            font-size: 70px;
+        }
+
+        html {
+            overflow-y: scroll !important
+        }
+
+        #nameDisplay {
+            font-size: 50px;
+            margin-top: 100px;
+        }
+
+        #startButton {
+            background-color: #279cff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 30px;
+            margin-top: 100px;
+        }
+    </style>
     <h1>点名器</h1>
     <div id="nameDisplay"></div>
     <button id="startButton">开始</button>
 
-    <script src="script.js"></script>
+    <script>
+        // 读取名单文件
+        function readNamesFromVariable() {
+            const names = ["伍卓洋", "陈思齐", "周洋光", "赵澄宇", "朱贞锦", "谭智源", "吴优", "李超", "沈乐", "易畅", "张继仁", "马锐航", "张晏阳", "李昀臻", "马勋韬", "胡恒搏", "李文豪", "肖炫宇", "汪轩羽", "何厚辰", "吴嘉镱", "龚恒睿", "欧瑞捷", "杨振鹏", "尹致尧", "马思奇", "赵婧希", "杨梓翊", "张又文", "华晋颐", "杨馥菊", "廖昆淇", "余佳蓉", "韩玮", "刘杨舒以", "肖靖瑶", "张丁予", "孙婉宸", "解简如", "杜姝铮", "马瑗含", "杜珂", "刘娅琪", "茹奕", "杨宝月", "张砾允", "王柳雅", "向芷瑶", "农丰慈", "马培宁", "肖雅月"];
+            const startButton = document.getElementById('startButton');
+            startButton.addEventListener('click', () => startRolling(names));
+        }
+
+        // 开始滚动动画
+        function startRolling(names) {
+            const nameDisplay = document.getElementById('nameDisplay');
+            const rollInterval = setInterval(() => {
+                const randomIndex = Math.floor(Math.random() * names.length);
+                nameDisplay.textContent = names[randomIndex];
+            }, 75);
+
+            setTimeout(() => {
+                clearInterval(rollInterval);
+            }, Math.random() * 600 + 300);
+        }
+
+        // 页面加载完成后执行
+        window.onload = function () {
+            const startButton = document.getElementById('startButton');
+            readNamesFromFile();
+        };
+    </script>
 </body>
 
 </html>
