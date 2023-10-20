@@ -76,12 +76,6 @@
             startButton.addEventListener('click', () => startRolling(names, startButton));
         }
 
-        function playSound(sound) {
-            const audioElement = document.getElementById(sound);
-            audioElement.currentTime = 0;
-            audioElement.play();
-        }
-
         // 开始滚动动画
         function startRolling(names, startButton) {
             const nameDisplay = document.getElementById('nameDisplay');
@@ -94,7 +88,6 @@
                     randomIndex = Math.floor(Math.random() * names.length);
                 }
                 nameDisplay.textContent = names[randomIndex];
-                playSound('rollSound');
             }, 50);
 
             setTimeout(() => {
@@ -106,7 +99,6 @@
                 }
                 startButton.disabled = false;
                 startButton.classList.remove('disabled');
-                playSound('successSound');
             }, Math.random() * 300 + 600);
         }
 
@@ -121,8 +113,6 @@
     <h1>点名器</h1>
     <div id="nameDisplay"></div>
     <button id="startButton">开始</button>
-    <audio id="rollSound" src="https://www.soundjay.com/button/button-3.mp3"></audio>
-    <audio id="successSound" src="https://www.soundjay.com/button/button-9.mp3"></audio>
 </body>
 
 </html>
