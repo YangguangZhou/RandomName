@@ -31,6 +31,8 @@
         #nameDisplay {
             font-size: 50px;
             margin-top: 100px;
+            opacity: 0;
+            transition: opacity 0.5s;
         }
 
         #startButton {
@@ -42,12 +44,13 @@
             text-decoration: none;
             display: inline-block;
             font-size: 30px;
-            margin-top: 100px;
-            transition: all 0.2s ease-in-out; /* 添加过渡效果 */
+            margin-top: 50px;
+            transition: all 0.2s ease-in-out;
+            border-radius: 10px;
         }
 
         #startButton:active {
-            transform: scale(0.95); /* 缩小按钮 */
+            transform: scale(0.95);
         }
 
         #startButton.disabled {
@@ -57,8 +60,8 @@
 
         /* 使页面元素在移动设备上更具响应性 */
         #nameDisplay, #startButton {
-            width: 100%; /* 使得名字显示和按钮充满整个宽度 */
-            max-width: 200px; /* 设置一个最大宽度，避免在大屏幕上过宽 */
+            width: 100%;
+            max-width: 200px;
         }
     </style>
 </head>
@@ -74,10 +77,6 @@
             startButton.addEventListener('click', () => startRolling(names, startButton));
         }
 
-        function playClickAnimation() {
-    const startButton = document.getElementById('startButton');
-    gsap.to(startButton, {scale: 0.95, duration: 0.1, yoyo: true, repeat: 1}); // 使用GSAP添加点击动画
-}
         // 开始滚动动画
         function startRolling(names, startButton) {
             const nameDisplay = document.getElementById('nameDisplay');
@@ -90,6 +89,7 @@
                     randomIndex = Math.floor(Math.random() * names.length);
                 }
                 nameDisplay.textContent = names[randomIndex];
+                playSound('rollSound');
             }, 50);
 
             setTimeout(() => {
@@ -101,11 +101,19 @@
                 }
                 startButton.disabled = false;
                 startButton.classList.remove('disabled');
+                // 添加淡入效果
+                gsap.to(nameDisplay, { opacity: 1, duration: 0.5 });
+                playSound('successSound');
             }, Math.random() * 300 + 600);
-            playClickAnimation();
         }
 
         let lastTwoRounds = [];
+
+        function playSound(sound) {
+            const audioElement = document.getElementById(sound);
+            audioElement.currentTime = 0;
+            audioElement.play();
+        }
 
         // 页面加载完成后执行
         document.addEventListener('DOMContentLoaded', function () {
@@ -116,6 +124,8 @@
     <h1>点名器</h1>
     <div id="nameDisplay"></div>
     <button id="startButton">开始</button>
+    <audio id="rollSound" src="https://www.soundjay.com/button/button-3.mp3"></audio>
+    <audio id="successSound" src="https://www.soundjay.com/button/button-9.mp3"></audio>
 </body>
 
 </html>
