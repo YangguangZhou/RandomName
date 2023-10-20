@@ -21,7 +21,7 @@
         h1 {
             color: #222;
             font: bold;
-            font-size: 70px;
+            font-size: 60px;
         }
 
         html {
@@ -31,6 +31,8 @@
         #nameDisplay {
             font-size: 50px;
             margin-top: 100px;
+            opacity: 0;
+            transition: opacity 0.5s;
         }
 
         #startButton {
@@ -42,18 +44,31 @@
             text-decoration: none;
             display: inline-block;
             font-size: 30px;
-            margin-top: 100px;
+            margin-top: 50px;
+            transition: all 0.2s ease-in-out;
+            border-radius: 10px;
+        }
+
+        #startButton:active {
+            transform: scale(0.95);
         }
 
         #startButton.disabled {
             background-color: #ccc;
             cursor: not-allowed;
         }
+
+        /* 使页面元素在移动设备上更具响应性 */
+        #nameDisplay, #startButton {
+            width: 100%;
+            max-width: 200px;
+        }
     </style>
 </head>
 
 <body>
     <script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.9.1/gsap.min.js"></script>
     <script>
         // 读取名单文件
         function readNames() {
@@ -74,6 +89,7 @@
                     randomIndex = Math.floor(Math.random() * names.length);
                 }
                 nameDisplay.textContent = names[randomIndex];
+                playSound('rollSound');
             }, 50);
 
             setTimeout(() => {
@@ -85,13 +101,22 @@
                 }
                 startButton.disabled = false;
                 startButton.classList.remove('disabled');
-            }, Math.random() * 300 + 800);
+                // 添加淡入效果
+                gsap.to(nameDisplay, { opacity: 1, duration: 0.5 });
+                playSound('successSound');
+            }, Math.random() * 300 + 600);
         }
 
         let lastTwoRounds = [];
 
+        function playSound(sound) {
+            const audioElement = document.getElementById(sound);
+            audioElement.currentTime = 0;
+            audioElement.play();
+        }
+
         // 页面加载完成后执行
-        $(document).ready(function () {
+        document.addEventListener('DOMContentLoaded', function () {
             const startButton = document.getElementById('startButton');
             readNames();
         });
@@ -99,6 +124,8 @@
     <h1>点名器</h1>
     <div id="nameDisplay"></div>
     <button id="startButton">开始</button>
+    <audio id="rollSound" src="https://www.soundjay.com/button/button-3.mp3"></audio>
+    <audio id="successSound" src="https://www.soundjay.com/button/button-9.mp3"></audio>
 </body>
 
 </html>
