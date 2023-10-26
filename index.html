@@ -31,10 +31,11 @@
 
         #nameDisplay {
             font-size: 50px;
-            margin-top: 100px;
+            margin-top: 30px;
         }
 
-        #startButton {
+        #startButton,
+        #resetButton {
             background-color: #279cff;
             color: white;
             border: none;
@@ -43,24 +44,100 @@
             text-decoration: none;
             display: inline-block;
             font-size: 30px;
-            margin-top: 50px;
+            margin-top: 30px;
             transition: all 0.2s ease-in-out;
             border-radius: 10px;
         }
 
-        #startButton:active {
+        #startButton:active,
+        #resetButton:active {
             transform: scale(0.95);
         }
 
-        #startButton.disabled {
+        #startButton.disabled,
+        #resetButton.disabled {
             background-color: #ccc;
             cursor: not-allowed;
         }
 
+        .switch-container {
+            display: flex;
+            align-items: center;
+            /* margin-bottom: 10px; */
+            margin-top: 20px;
+        }
+
+        .switch-label {
+            margin: 0 10px;
+            font-size: 20px;
+            font-weight: normal;
+        }
+
+        .count-container {
+            margin-top: 30px;
+            font-size: 20px;
+        }
+
         /* 使页面元素在移动设备上更具响应性 */
-        #nameDisplay, #startButton {
+        #nameDisplay,
+        #startButton,
+        #resetButton {
             width: 100%;
             max-width: 200px;
+        }
+
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 36px;
+            height: 20px;
+            margin-top: 5px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ddd;
+            -webkit-transition: .4s;
+            transition: .4s;
+            border-radius: 20px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 16px;
+            width: 16px;
+            left: 2px;
+            bottom: 2px;
+            background-color: white;
+            -webkit-transition: .4s;
+            transition: .4s;
+            border-radius: 50%;
+        }
+
+        input:checked+.slider {
+            background-color: #279cff;
+        }
+
+        input:focus+.slider {
+            box-shadow: 0 0 1px #279cff;
+        }
+
+        input:checked+.slider:before {
+            -webkit-transform: translateX(16px);
+            -ms-transform: translateX(16px);
+            transform: translateX(16px);
         }
     </style>
 </head>
@@ -69,50 +146,142 @@
     <script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.9.1/gsap.min.js"></script>
     <script>
+        let noRepeat = true;
+        let playSound = true;
+        let playedNames = [];
+        let allNames = [];
+        const audio = new Audio('sound.mp3');
+
         // 读取名单文件
         function readNames() {
-            const names = ["伍卓洋", "陈思齐", "周洋光", "赵澄宇", "朱贞锦", "谭智源", "吴优", "李超", "沈乐", "易畅", "张继仁", "马锐航", "张晏阳", "李昀臻", "马勋韬", "胡恒搏", "李文豪", "肖炫宇", "汪轩羽", "何厚辰", "吴嘉镱", "龚恒睿", "欧瑞捷", "杨振鹏", "尹致尧", "马思奇", "赵婧希", "杨梓翊", "张又文", "华晋颐", "杨馥菊", "廖昆淇", "余佳蓉", "韩玮", "刘杨舒以", "肖靖瑶", "张丁予", "孙婉宸", "解简如", "杜姝铮", "马瑗含", "杜珂", "刘娅琪", "茹奕", "杨宝月", "张砾允", "王柳雅", "向芷瑶", "农丰慈", "马培宁", "肖雅月"];
+            allNames = ["伍卓洋", "陈思齐", "周洋光", "赵澄宇", "朱贞锦", "谭智源", "吴优", "李超", "沈乐", "易畅", "张继仁", "马锐航", "张晏阳", "李昀臻", "马勋韬", "胡恒搏", "李文豪", "肖炫宇", "汪轩羽", "何厚辰", "吴嘉镱", "龚恒睿", "欧瑞捷", "杨振鹏", "尹致尧", "马思奇", "赵婧希", "杨梓翊", "张又文", "华晋颐", "杨馥菊", "廖昆淇", "余佳蓉", "韩玮", "刘杨舒以", "肖靖瑶", "张丁予", "孙婉宸", "解简如", "杜姝铮", "马瑗含", "杜珂", "刘娅琪", "茹奕", "杨宝月", "张砾允", "王柳雅", "向芷瑶", "农丰慈", "马培宁", "肖雅月"];
             const startButton = document.getElementById('startButton');
-            startButton.addEventListener('click', () => startRolling(names, startButton));
+            startButton.addEventListener('click', () => startRolling());
+            playedCount.textContent = playedNames.length;
+            remainingCount.textContent = allNames.length - playedNames.length;
         }
 
         // 开始滚动动画
-        function startRolling(names, startButton) {
+        function startRolling() {
             const nameDisplay = document.getElementById('nameDisplay');
+            const startButton = document.getElementById('startButton');
+            const resetButton = document.getElementById('resetButton');
+
             startButton.disabled = true;
             startButton.classList.add('disabled');
-            const rollInterval = setInterval(() => {
-                let randomIndex = Math.floor(Math.random() * names.length);
-                // 判断当前被点到的人是否在前两轮被点到
-                while (lastTwoRounds.includes(names[randomIndex])) {
-                    randomIndex = Math.floor(Math.random() * names.length);
+            if (playedNames.length === allNames.length) {
+                nameDisplay.textContent = "已点完";
+            } else {
+                if (playSound) {
+                    audio.play();
                 }
-                nameDisplay.textContent = names[randomIndex];
-            }, 40);
+                let randomIndex, random
+                const rollInterval = setInterval(() => {
+                    randomIndex = Math.floor(Math.random() * allNames.length);
+                    randomName = allNames[randomIndex];
 
-            setTimeout(() => {
-                clearInterval(rollInterval);
-                // 将当前被点到的人加入前两轮被点到的人的数组中
-                lastTwoRounds.push(nameDisplay.textContent);
-                if (lastTwoRounds.length > 3) {
-                    lastTwoRounds.shift();
-                }
-                startButton.disabled = false;
-                startButton.classList.remove('disabled');
-            }, Math.random() * 300 + 600);
+                    nameDisplay.textContent = randomName;
+                }, 40);
+
+                setTimeout(() => {
+                    clearInterval(rollInterval);
+                    if (noRepeat) {
+                        while (playedNames.includes(randomName)) {
+                            randomIndex = Math.floor(Math.random() * allNames.length);
+                            randomName = allNames[randomIndex];
+                        }
+                        playedNames.push(randomName);
+                        console.log(playedNames.length);
+                        nameDisplay.textContent = randomName;
+                        playedCount.textContent = playedNames.length;
+                        remainingCount.textContent = allNames.length - playedNames.length;
+                    }
+                    startButton.disabled = false;
+                    startButton.classList.remove('disabled');
+                    remainingCount
+                    if (playSound) {
+                        audio.pause();
+                        audio.currentTime = 0;
+                    }
+                }, Math.random() * 300 + 600);
+
+
+            }
+            // resetButton.disabled = true;
+            // resetButton.classList.add('disabled');
+
         }
 
-        let lastTwoRounds = [];
+        function resetRoll() {
+            playedNames = [];
+            const nameDisplay = document.getElementById('nameDisplay');
+            nameDisplay.textContent = '';
+            const resetButton = document.getElementById('resetButton');
+            // resetButton.disabled = true;
+            // resetButton.classList.add('disabled');
+        }
 
         // 页面加载完成后执行
         document.addEventListener('DOMContentLoaded', function () {
             const startButton = document.getElementById('startButton');
+            const resetButton = document.getElementById('resetButton');
+
             readNames();
+
+            // 添加“不重复”开关的事件监听器
+            const noRepeatSwitch = document.getElementById('noRepeatSwitch');
+            noRepeatSwitch.addEventListener('change', () => {
+                noRepeat = noRepeatSwitch.checked;
+                if (!noRepeat) {
+                    document.getElementById('played').style.display = "none";
+                    document.getElementById('remaining').style.display = "none";
+                } else {
+                    document.getElementById('played').style.display = "block";
+                    document.getElementById('remaining').style.display = "block";
+                    playedNames = [];
+                    playedCount.textContent = playedNames.length;
+                    remainingCount.textContent = allNames.length - playedNames.length;
+                }
+            });
+
+            // 添加“播放声音”开关的事件监听器
+            const playSoundSwitch = document.getElementById('playSoundSwitch');
+            playSoundSwitch.addEventListener('change', () => {
+                playSound = playSoundSwitch.checked;
+            });
+
+            // 添加重置按钮的事件监听器
+            resetButton.addEventListener('click', resetRoll);
         });
     </script>
     <h1>点名器</h1>
+
+    <!-- 添加“播放声音”开关 -->
+    <div class="switch-container">
+        <label class="switch-label">不重复</label>
+        <!-- <input type="checkbox" id="noRepeatSwitch" checked> -->
+        <label class="switch" >
+            <input type="checkbox" id="noRepeatSwitch" checked>
+            <span class="slider round"></span>
+        </label>
+        <label class="switch-label">播放声音</label>
+        <!-- <input type="checkbox" id="playSoundSwitch" checked> -->
+        <label class="switch" >
+            <input type="checkbox" id="playSoundSwitch" checked>
+            <span class="slider round"></span>
+        </label>
+    </div>
+
     <div id="nameDisplay"></div>
     <button id="startButton">开始</button>
+    <button id="resetButton">重置</button>
+    
+
+    <!-- 显示已点名人数和未点名人数 -->
+    <div class="count-container">
+        <span id="played" style="display: block;">已点名人数: <span id="playedCount"></span></span><br>
+        <span id="remaining" style="display: block;">未点名人数: <span id="remainingCount"></span></span>
+    </div>
 </body>
 
 </html>
