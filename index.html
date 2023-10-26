@@ -217,6 +217,8 @@
             const nameDisplay = document.getElementById('nameDisplay');
             nameDisplay.textContent = '';
             const resetButton = document.getElementById('resetButton');
+            playedCount.textContent = playedNames.length;
+            remainingCount.textContent = allNames.length - playedNames.length;
             startButton.disabled = false;
             startButton.classList.remove('disabled');
             // resetButton.disabled = true;
