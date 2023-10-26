@@ -217,6 +217,8 @@
             const nameDisplay = document.getElementById('nameDisplay');
             nameDisplay.textContent = '';
             const resetButton = document.getElementById('resetButton');
+            startButton.disabled = false;
+            startButton.classList.remove('disabled');
             // resetButton.disabled = true;
             // resetButton.classList.add('disabled');
         }
@@ -235,9 +237,11 @@
                 if (!noRepeat) {
                     document.getElementById('played').style.display = "none";
                     document.getElementById('remaining').style.display = "none";
+                    document.getElementById('resetButton').style.display = "none";
                 } else {
                     document.getElementById('played').style.display = "block";
                     document.getElementById('remaining').style.display = "block";
+                    document.getElementById('resetButton').style.display = "block";
                     playedNames = [];
                     playedCount.textContent = playedNames.length;
                     remainingCount.textContent = allNames.length - playedNames.length;
@@ -274,7 +278,7 @@
 
     <div id="nameDisplay"></div>
     <button id="startButton">开始</button>
-    <button id="resetButton">重置</button>
+    <button id="resetButton" style="display: block;">重置</button>
     
 
     <!-- 显示已点名人数和未点名人数 -->
