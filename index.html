@@ -13,7 +13,6 @@
             margin: 0;
             overflow: hidden;
         }
-
         body {
             background-color: #f5f5f5;
             text-align: center;
@@ -23,17 +22,17 @@
             align-items: center;
             height: 100vh;
             overflow: hidden;
-            font-family: 'Open Sans', sans-serif, "Microsoft YaHei";
+            font-family: 'Open Sans', sans-serif;
         }
 
         h1 {
             color: #222;
             font-weight: bold;
-            font-size: 36px;
+            font-size: 48px;
         }
 
         #nameDisplay {
-            font-size: 48px;
+            font-size: 60px;
             margin-top: 30px;
         }
 
@@ -42,7 +41,7 @@
             background-color: #279cff;
             color: white;
             border: none;
-            padding: 10px 20px;
+            padding: 15px 30px;
             text-align: center;
             text-decoration: none;
             display: inline-block;
@@ -72,20 +71,20 @@
 
         .switch-label {
             margin: 0 10px;
-            font-size: 20px;
+            font-size: 24px;
             font-weight: normal;
         }
 
         .count-container {
             margin-top: 30px;
-            font-size: 20px;
+            font-size: 24px;
         }
 
         .switch {
             position: relative;
             display: inline-block;
-            width: 36px;
-            height: 20px;
+            width: 50px;
+            height: 30px;
             margin-top: 3px;
         }
 
@@ -104,16 +103,16 @@
             bottom: 0;
             background-color: #ddd;
             transition: .4s;
-            border-radius: 20px;
+            border-radius: 15px;
         }
 
         .slider:before {
             position: absolute;
             content: "";
-            height: 16px;
-            width: 16px;
-            left: 2px;
-            bottom: 2px;
+            height: 22px;
+            width: 22px;
+            left: 3.25px;
+            bottom: 4px;
             background-color: white;
             transition: .4s;
             border-radius: 50%;
@@ -128,8 +127,9 @@
         }
 
         input:checked+.slider:before {
-            transform: translateX(16px);
+            transform: translateX(22px);
         }
+    </style>
     </style>
 </head>
 
@@ -253,16 +253,13 @@
     </script>
     <h1>点名器</h1>
 
-    <!-- 添加“播放声音”开关 -->
     <div class="switch-container">
         <label class="switch-label">不重复</label>
-        <!-- <input type="checkbox" id="noRepeatSwitch" checked> -->
         <label class="switch">
             <input type="checkbox" id="noRepeatSwitch" checked>
             <span class="slider round"></span>
         </label>
         <label class="switch-label">播放声音</label>
-        <!-- <input type="checkbox" id="playSoundSwitch" checked> -->
         <label class="switch">
             <input type="checkbox" id="playSoundSwitch" checked>
             <span class="slider round"></span>
@@ -273,8 +270,6 @@
     <button id="startButton">开始</button>
     <button id="resetButton" style="display: block;">重置</button>
 
-
-    <!-- 显示已点名人数和未点名人数 -->
     <div class="count-container">
         <span id="played" style="display: block;">已点名人数: <span id="playedCount"></span></span><br>
         <span id="remaining" style="display: block;">未点名人数: <span id="remainingCount"></span></span>
