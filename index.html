@@ -5,10 +5,8 @@
     <title>点名器</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="icon" href="https://jerryz.com.cn/favicon.png">
-    <!-- <link rel="stylesheet" href="https://cdn.bootcdn.net/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css"> -->
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;700&display=swap" rel="stylesheet">
     <style>
-        /* 默认样式 */
-
         body,
         html {
             height: 100%;
@@ -24,22 +22,18 @@
             justify-content: center;
             align-items: center;
             height: 100vh;
-            overflow-x: hidden;
-            font-family: Arial, "Microsoft YaHei", "宋体", "黑体", sans-serif;
+            overflow: hidden;
+            font-family: 'Open Sans', sans-serif, "Microsoft YaHei";
         }
 
         h1 {
             color: #222;
-            font: bold;
-            font-size: 60px;
-        }
-
-        html {
-            overflow-y: scroll !important
+            font-weight: bold;
+            font-size: 36px;
         }
 
         #nameDisplay {
-            font-size: 50px;
+            font-size: 48px;
             margin-top: 30px;
         }
 
@@ -52,10 +46,11 @@
             text-align: center;
             text-decoration: none;
             display: inline-block;
-            font-size: 30px;
+            font-size: 24px;
             margin-top: 30px;
             transition: all 0.2s ease-in-out;
             border-radius: 10px;
+            cursor: pointer;
         }
 
         #startButton:active,
@@ -72,7 +67,6 @@
         .switch-container {
             display: flex;
             align-items: center;
-            /* margin-bottom: 10px; */
             margin-top: 20px;
         }
 
@@ -85,14 +79,6 @@
         .count-container {
             margin-top: 30px;
             font-size: 20px;
-        }
-
-        /* 使页面元素在移动设备上更具响应性 */
-        #nameDisplay,
-        #startButton,
-        #resetButton {
-            width: 100%;
-            max-width: 200px;
         }
 
         .switch {
@@ -117,7 +103,6 @@
             right: 0;
             bottom: 0;
             background-color: #ddd;
-            -webkit-transition: .4s;
             transition: .4s;
             border-radius: 20px;
         }
@@ -130,7 +115,6 @@
             left: 2px;
             bottom: 2px;
             background-color: white;
-            -webkit-transition: .4s;
             transition: .4s;
             border-radius: 50%;
         }
@@ -144,8 +128,6 @@
         }
 
         input:checked+.slider:before {
-            -webkit-transform: translateX(16px);
-            -ms-transform: translateX(16px);
             transform: translateX(16px);
         }
     </style>
