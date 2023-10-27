@@ -5,7 +5,7 @@
     <title>点名器</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="icon" href="https://jerryz.com.cn/favicon.png">
-    <link rel="stylesheet" href="https://cdn.bootcdn.net/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css">
+    <!-- <link rel="stylesheet" href="https://cdn.bootcdn.net/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css"> -->
     <style>
         /* 默认样式 */
         body {
@@ -17,6 +17,7 @@
             align-items: center;
             height: 100vh;
             overflow-x: hidden;
+            font-family: Arial, "Microsoft YaHei", "宋体", "黑体", sans-serif;
         }
 
         h1 {
@@ -91,7 +92,7 @@
             display: inline-block;
             width: 36px;
             height: 20px;
-            margin-top: 5px;
+            margin-top: 3px;
         }
 
         .switch input {
@@ -143,8 +144,8 @@
 </head>
 
 <body>
-    <script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.9.1/gsap.min.js"></script>
+    <!-- <script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.9.1/gsap.min.js"></script> -->
     <script>
         let noRepeat = true;
         let playSound = true;
@@ -191,7 +192,7 @@
                             randomName = allNames[randomIndex];
                         }
                         playedNames.push(randomName);
-                        console.log(playedNames.length);
+                        console.log(playedNames.length+" "+randomName);
                         nameDisplay.textContent = randomName;
                         playedCount.textContent = playedNames.length;
                         remainingCount.textContent = allNames.length - playedNames.length;
@@ -203,7 +204,7 @@
                         audio.pause();
                         audio.currentTime = 0;
                     }
-                }, Math.random() * 300 + 600);
+                }, Math.random() * 500 + 500);
 
 
             }
