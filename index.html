@@ -8,6 +8,14 @@
     <!-- <link rel="stylesheet" href="https://cdn.bootcdn.net/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css"> -->
     <style>
         /* 默认样式 */
+
+        body,
+        html {
+            height: 100%;
+            margin: 0;
+            overflow: hidden;
+        }
+
         body {
             background-color: #f5f5f5;
             text-align: center;
@@ -192,7 +200,7 @@
                             randomName = allNames[randomIndex];
                         }
                         playedNames.push(randomName);
-                        console.log(playedNames.length+" "+randomName);
+                        console.log(playedNames.length + " " + randomName);
                         nameDisplay.textContent = randomName;
                         playedCount.textContent = playedNames.length;
                         remainingCount.textContent = allNames.length - playedNames.length;
@@ -267,13 +275,13 @@
     <div class="switch-container">
         <label class="switch-label">不重复</label>
         <!-- <input type="checkbox" id="noRepeatSwitch" checked> -->
-        <label class="switch" >
+        <label class="switch">
             <input type="checkbox" id="noRepeatSwitch" checked>
             <span class="slider round"></span>
         </label>
         <label class="switch-label">播放声音</label>
         <!-- <input type="checkbox" id="playSoundSwitch" checked> -->
-        <label class="switch" >
+        <label class="switch">
             <input type="checkbox" id="playSoundSwitch" checked>
             <span class="slider round"></span>
         </label>
@@ -282,7 +290,7 @@
     <div id="nameDisplay"></div>
     <button id="startButton">开始</button>
     <button id="resetButton" style="display: block;">重置</button>
-    
+
 
     <!-- 显示已点名人数和未点名人数 -->
     <div class="count-container">
