@@ -153,6 +153,18 @@
             remainingCount.textContent = allNames.length - playedNames.length;
         }
 
+        // 朗读文本
+        function speak(text) {
+            if ('speechSynthesis' in window) {
+                var utterance = new SpeechSynthesisUtterance();
+                utterance.text = text;
+                utterance.lang = 'zh-CN';
+                speechSynthesis.speak(utterance);
+            } else {
+                alert('抱歉，你的浏览器不支持Web Speech API');
+            }
+        }
+
         // 开始滚动动画
         function startRolling() {
             const nameDisplay = document.getElementById('nameDisplay');
@@ -190,10 +202,10 @@
                     }
                     startButton.disabled = false;
                     startButton.classList.remove('disabled');
-                    remainingCount
                     if (playSound) {
                         audio.pause();
                         audio.currentTime = 0;
+                        speak(randomName);
                     }
                 }, Math.random() * 500 + 500);
 
