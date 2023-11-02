@@ -142,11 +142,14 @@
         let playSound = true;
         let playedNames = [];
         let allNames = [];
+        let speakNames = [];
+        var canRead;
         const audio = new Audio('sound.mp3');
 
         // 读取名单文件
         function readNames() {
             allNames = ["伍卓洋", "陈思齐", "周洋光", "赵澄宇", "朱贞锦", "谭智源", "吴优", "李超", "沈乐", "易畅", "张继仁", "马锐航", "张晏阳", "李昀臻", "马勋韬", "胡恒搏", "李文豪", "肖炫宇", "汪轩羽", "何厚辰", "吴嘉镱", "龚恒睿", "欧瑞捷", "杨振鹏", "尹致尧", "马思奇", "赵婧希", "杨梓翊", "张又文", "华晋颐", "杨馥菊", "廖昆淇", "余佳蓉", "韩玮", "刘杨舒以", "肖靖瑶", "张丁予", "孙婉宸", "解简如", "杜姝铮", "马瑗含", "杜珂", "刘娅琪", "茹奕", "杨宝月", "张砾允", "王柳雅", "向芷瑶", "农丰慈", "马培宁", "肖雅月"];
+            speakNames = ["伍卓洋", "陈思齐", "周洋光", "赵澄宇", "朱贞锦", "谭智源", "吴优", "李超", "沈乐", "易畅", "张继仁", "马锐航", "张晏阳", "李云臻", "马勋韬", "胡恒搏", "李文豪", "肖炫宇", "汪轩羽", "何厚辰", "吴嘉镱", "龚恒睿", "欧瑞捷", "杨振鹏", "尹致摇", "马思奇", "赵静希", "杨梓翼", "张又文", "化晋颐", "杨馥菊", "廖昆淇", "余佳蓉", "韩伟", "刘杨舒以", "肖静摇", "张丁予", "孙婉宸", "谢简如", "杜姝铮", "马援含", "杜珂", "刘亚琪", "如意", "杨宝月", "张立允", "王柳雅", "向止瑶", "农丰慈", "马培宁", "肖雅月"];
             const startButton = document.getElementById('startButton');
             startButton.addEventListener('click', () => startRolling());
             playedCount.textContent = playedNames.length;
@@ -155,13 +158,11 @@
 
         // 朗读文本
         function speak(text) {
-            if ('speechSynthesis' in window) {
+            if (canRead) {
                 var utterance = new SpeechSynthesisUtterance();
                 utterance.text = text;
                 utterance.lang = 'zh-CN';
                 speechSynthesis.speak(utterance);
-            } else {
-                alert('抱歉，你的浏览器不支持Web Speech API');
             }
         }
 
@@ -205,15 +206,10 @@
                     if (playSound) {
                         audio.pause();
                         audio.currentTime = 0;
-                        speak(randomName);
+                        speak(speakNames[randomIndex]);
                     }
                 }, Math.random() * 500 + 500);
-
-
             }
-            // resetButton.disabled = true;
-            // resetButton.classList.add('disabled');
-
         }
 
         function resetRoll() {
@@ -264,6 +260,14 @@
 
             // 添加重置按钮的事件监听器
             resetButton.addEventListener('click', resetRoll);
+
+            // 检查浏览器是否支持Web Speech API
+            if ('speechSynthesis' in window) {
+                canRead = true;
+            } else {
+                canRead = false;
+                alert('抱歉，你的浏览器不支持Web Speech API');
+            }
         });
     </script>
     <h1>点名器</h1>
