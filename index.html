@@ -206,7 +206,9 @@
                     if (playSound) {
                         audio.pause();
                         audio.currentTime = 0;
-                        speak(speakNames[randomIndex]);
+                        setTimeout(function() {
+                            speak(speakNames[randomIndex]);
+                        }, 300);
                     }
                 }, Math.random() * 500 + 500);
             }
