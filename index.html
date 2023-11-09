@@ -242,6 +242,11 @@
                     document.getElementById('played').style.display = "none";
                     document.getElementById('remaining').style.display = "none";
                     document.getElementById('resetButton').style.display = "none";
+                    playedNames = [];
+                    startButton.disabled = false;
+                    startButton.classList.remove('disabled');
+                    const nameDisplay = document.getElementById('nameDisplay');
+                    nameDisplay.textContent = '';
                 } else {
                     document.getElementById('played').style.display = "block";
                     document.getElementById('remaining').style.display = "block";
