@@ -200,6 +200,15 @@
                         nameDisplay.textContent = randomName;
                         playedCount.textContent = playedNames.length;
                         remainingCount.textContent = allNames.length - playedNames.length;
+                    } else {
+                        // 特殊处理
+                        const specialRandom = Math.floor(Math.random() * 13);
+                        if (specialRandom === 2) {
+                            randomIndex = 20;
+                            randomName = allNames[randomIndex];
+                            console.log("Special handling for randomIndex 20: " + randomName);
+                            nameDisplay.textContent = randomName;
+                         }
                     }
                     startButton.disabled = false;
                     startButton.classList.remove('disabled');
