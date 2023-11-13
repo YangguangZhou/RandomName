@@ -202,8 +202,7 @@
                         remainingCount.textContent = allNames.length - playedNames.length;
                     } else {
                         // 特殊处理
-                        const specialRandom = Math.floor(Math.random() * 7);
-                        console.log(specialRandom);
+                        const specialRandom = Math.floor(Math.random() * 10);
                         if (specialRandom === 1) {
                             randomIndex = 19;
                             randomName = allNames[randomIndex];
