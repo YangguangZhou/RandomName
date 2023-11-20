@@ -159,19 +159,21 @@
                 .then(data => {
                     allNames = data.split('\n');
                     fetch('./speak.txt')
+                        console.log("Loaded names.txt successfully.")
+                        console.log(speakNames)
                         .then(response => response.text())
                         .then(data => {
                             speakNames = data.split('\n');
-                            initialize();
+                            console.log("Loaded speak.txt successfully.")
+                            console.log(speakNames);
                         })
                         .catch(error => {
                             speakNames = [...allNames];
-                            initialize();
+                            console.log("Failed to load speak.txt, using names.txt instead.")
                         });
                 })
-                .catch(error => console.error('Error:', error));
-            const startButton = document.getElementById('startButton');
-            startButton.addEventListener('click', () => startRolling());
+                .catch(error => console.error('Error:', "Failed to load names.txt."))
+            initialize();
             playedCount.textContent = playedNames.length;
             remainingCount.textContent = allNames.length - playedNames.length;
         }
@@ -191,7 +193,6 @@
             const nameDisplay = document.getElementById('nameDisplay');
             const startButton = document.getElementById('startButton');
             const resetButton = document.getElementById('resetButton');
-
             startButton.disabled = true;
             startButton.classList.add('disabled');
             if (playedNames.length === allNames.length) {
@@ -204,10 +205,8 @@
                 const rollInterval = setInterval(() => {
                     randomIndex = Math.floor(Math.random() * allNames.length);
                     randomName = allNames[randomIndex];
-
                     nameDisplay.textContent = randomName;
                 }, 40);
-
                 setTimeout(() => {
                     clearInterval(rollInterval);
                     if (noRepeat) {
@@ -226,9 +225,7 @@
                     if (playSound) {
                         audio.pause();
                         audio.currentTime = 0;
-                        setTimeout(function () {
-                            speak(speakNames[randomIndex]);
-                        }, 200);
+                        speak(speakNames[randomIndex]);
                     }
                 }, Math.random() * 500 + 750);
             }
@@ -243,18 +240,13 @@
             remainingCount.textContent = allNames.length - playedNames.length;
             startButton.disabled = false;
             startButton.classList.remove('disabled');
-            // resetButton.disabled = true;
-            // resetButton.classList.add('disabled');
         }
 
         // 页面加载完成后执行
         document.addEventListener('DOMContentLoaded', function () {
             const startButton = document.getElementById('startButton');
             const resetButton = document.getElementById('resetButton');
-
             readNames();
-
-            // 添加“不重复”开关的事件监听器
             const noRepeatSwitch = document.getElementById('noRepeatSwitch');
             noRepeatSwitch.addEventListener('change', () => {
                 noRepeat = noRepeatSwitch.checked;
@@ -276,16 +268,12 @@
                     remainingCount.textContent = allNames.length - playedNames.length;
                 }
             });
-
-            // 添加“播放声音”开关的事件监听器
             const playSoundSwitch = document.getElementById('playSoundSwitch');
             playSoundSwitch.addEventListener('change', () => {
                 playSound = playSoundSwitch.checked;
                 audio.pause();
                 audio.currentTime = 0;
             });
-
-            // 添加重置按钮的事件监听器
             resetButton.addEventListener('click', resetRoll);
 
             // 检查浏览器是否支持Web Speech API
@@ -298,7 +286,6 @@
         });
     </script>
     <h1>点名器</h1>
-
     <div class="switch-container">
         <label class="switch-label">不重复</label>
         <label class="switch">
