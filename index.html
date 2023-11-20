@@ -245,9 +245,9 @@
 
         // 页面加载完成后执行
         document.addEventListener('DOMContentLoaded', function () {
+            readNames();
             const startButton = document.getElementById('startButton');
             const resetButton = document.getElementById('resetButton');
-            readNames();
             const noRepeatSwitch = document.getElementById('noRepeatSwitch');
             noRepeatSwitch.addEventListener('change', () => {
                 noRepeat = noRepeatSwitch.checked;
