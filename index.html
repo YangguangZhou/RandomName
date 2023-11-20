@@ -171,9 +171,10 @@
                             speakNames = [...allNames];
                             console.log("Failed to load speak.txt, using names.txt instead.")
                         });
+                        initialize();
                 })
                 .catch(error => console.error('Error:', "Failed to load names.txt."))
-            initialize();
+            
             playedCount.textContent = playedNames.length;
             remainingCount.textContent = allNames.length - playedNames.length;
         }
