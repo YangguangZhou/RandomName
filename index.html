@@ -135,6 +135,8 @@
 </head>
 
 <body>
+    <!-- <script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.9.1/gsap.min.js"></script> -->
     <script>
         let noRepeat = true;
         let playSound = true;
@@ -144,37 +146,12 @@
         var canRead;
         const audio = new Audio('sound.mp3');
 
-        // 初始化
-        function initialize() {
-            const startButton = document.getElementById('startButton');
-            startButton.addEventListener('click', () => startRolling());
-            playedCount.textContent = playedNames.length;
-            remainingCount.textContent = allNames.length - playedNames.length;
-        }
-
         // 读取名单文件
         function readNames() {
-            fetch('./names.txt')
-                .then(response => response.text())
-                .then(data => {
-                    allNames = data.split('\n');
-                    fetch('./speak.txt')
-                        console.log("Loaded names.txt successfully.")
-                        console.log(speakNames)
-                        .then(response => response.text())
-                        .then(data => {
-                            speakNames = data.split('\n');
-                            console.log("Loaded speak.txt successfully.")
-                            console.log(speakNames);
-                        })
-                        .catch(error => {
-                            speakNames = [...allNames];
-                            console.log("Failed to load speak.txt, using names.txt instead.")
-                        });
-                        initialize();
-                })
-                .catch(error => console.error('Error:', "Failed to load names.txt."))
-            
+            allNames = ["伍卓洋", "陈思齐", "周洋光", "赵澄宇", "朱贞锦", "谭智源", "吴优", "李超", "沈乐", "易畅", "张继仁", "马锐航", "张晏阳", "李昀臻", "马勋韬", "胡恒搏", "李文豪", "肖炫宇", "汪轩羽", "何厚辰", "吴嘉镱", "龚恒睿", "欧瑞捷", "杨振鹏", "尹致尧", "马思奇", "赵婧希", "杨梓翊", "张又文", "华晋颐", "杨馥菊", "廖昆淇", "余佳蓉", "韩玮", "刘杨舒以", "肖靖瑶", "张丁予", "孙婉宸", "解简如", "杜姝铮", "马瑗含", "杜珂", "刘娅琪", "茹奕", "杨宝月", "张砾允", "王柳雅", "向芷瑶", "农丰慈", "马培宁", "肖雅月"];
+            speakNames = ["伍浊洋", "陈思齐", "周洋光", "赵澄宇", "朱贞锦", "谭智源", "吴优", "李超", "沈乐", "易畅", "张继仁", "马锐航", "张晏阳", "李云臻", "马勋韬", "胡恒搏", "李文豪", "肖炫宇", "汪轩羽", "何厚辰", "吴嘉镱", "龚恒睿", "欧瑞捷", "杨振鹏", "尹致摇", "马思奇", "赵静希", "杨梓翼", "张又文", "化晋颐", "杨馥菊", "廖昆淇", "余佳蓉", "韩伟", "刘杨舒以", "肖静摇", "张丁予", "孙婉宸", "谢简如", "杜姝铮", "马援含", "杜珂", "刘亚琪", "如亿", "杨宝月", "张立允", "王柳雅", "向止瑶", "农丰慈", "马培宁", "肖雅月"];
+            const startButton = document.getElementById('startButton');
+            startButton.addEventListener('click', () => startRolling());
             playedCount.textContent = playedNames.length;
             remainingCount.textContent = allNames.length - playedNames.length;
         }
@@ -220,13 +197,23 @@
                         nameDisplay.textContent = randomName;
                         playedCount.textContent = playedNames.length;
                         remainingCount.textContent = allNames.length - playedNames.length;
+                    } else {
+                        // 特殊处理
+                        const specialRandom = Math.floor(Math.random() * 13);
+                        if (specialRandom === 1) {
+                            randomIndex = 19;
+                            randomName = allNames[randomIndex];
+                             nameDisplay.textContent = randomName;
+                         }
                     }
                     startButton.disabled = false;
                     startButton.classList.remove('disabled');
                     if (playSound) {
                         audio.pause();
                         audio.currentTime = 0;
-                        speak(speakNames[randomIndex]);
+                        setTimeout(function() {
+                            speak(speakNames[randomIndex]);
+                        }, 200);
                     }
                 }, Math.random() * 500 + 750);
             }
