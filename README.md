@@ -16,7 +16,7 @@
 
 ### 本地使用
 
-在 `index.html` 的第 144,145 行手动修改 `allNames` 和 `speakNames`，分别用于存放姓名和朗读内容。形如：
+删除 `index.html` 的 151~161 行，在第 144,145 行手动修改 `allNames` 和 `speakNames`，分别用于存放姓名和朗读内容。形如：
    
 ```javascript
 let allNames = ["张三", "李四", "王五", "赵六", "钱七", "孙八", "周九", "吴十"];

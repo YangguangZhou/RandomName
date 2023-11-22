@@ -152,6 +152,8 @@
                 const response1 = await fetch('names.txt');
                 allNames = (await response1.text()).split('\n');
             } catch (error) {
+                playedCount.textContent = "加载失败";
+                remainingCount.textContent = "加载失败";
                 alert('无法找到names.txt文件');
                 return;
             }
@@ -304,8 +306,8 @@
     <button id="resetButton" style="display: block;">重置</button>
 
     <div class="count-container">
-        <span id="played" style="display: block;">已点名人数: <span id="playedCount"></span></span><br>
-        <span id="remaining" style="display: block;">未点名人数: <span id="remainingCount"></span></span>
+        <span id="played" style="display: block;">已点名人数: <span id="playedCount">加载中...</span></span><br>
+        <span id="remaining" style="display: block;">未点名人数: <span id="remainingCount">加载中...</span></span>
     </div>
 </body>
 
