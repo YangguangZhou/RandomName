@@ -135,10 +135,7 @@
 </head>
 
 <body>
-    <!-- <script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.9.1/gsap.min.js"></script> -->
     <script>
-        let noRepeat = true;
         let playSound = true;
         let playedNames = [];
         let allNames = [];
@@ -155,6 +152,7 @@
                 playedCount.textContent = "加载失败";
                 remainingCount.textContent = "加载失败";
                 alert('无法找到names.txt文件');
+                resetButton.disabled = true;
                 return;
             }
             try {
@@ -201,7 +199,6 @@
                 }, 40);
                 setTimeout(() => {
                     clearInterval(rollInterval);
-                    if (noRepeat) {
                         while (playedNames.includes(randomName)) {
                             randomIndex = Math.floor(Math.random() * allNames.length);
                             randomName = allNames[randomIndex];
@@ -211,15 +208,6 @@
                         nameDisplay.textContent = randomName;
                         playedCount.textContent = playedNames.length;
                         remainingCount.textContent = allNames.length - playedNames.length;
-                    } else {
-                        // 特殊处理
-                        const specialRandom = Math.floor(Math.random() * 13);
-                        if (specialRandom === 1) {
-                            randomIndex = 19;
-                            randomName = allNames[randomIndex];
-                            nameDisplay.textContent = randomName;
-                        }
-                    }
                     startButton.disabled = false;
                     startButton.classList.remove('disabled');
                     if (playSound) {
@@ -249,27 +237,6 @@
             readNames();
             const startButton = document.getElementById('startButton');
             const resetButton = document.getElementById('resetButton');
-            const noRepeatSwitch = document.getElementById('noRepeatSwitch');
-            noRepeatSwitch.addEventListener('change', () => {
-                noRepeat = noRepeatSwitch.checked;
-                if (!noRepeat) {
-                    document.getElementById('played').style.display = "none";
-                    document.getElementById('remaining').style.display = "none";
-                    document.getElementById('resetButton').style.display = "none";
-                    playedNames = [];
-                    startButton.disabled = false;
-                    startButton.classList.remove('disabled');
-                    const nameDisplay = document.getElementById('nameDisplay');
-                    nameDisplay.textContent = '';
-                } else {
-                    document.getElementById('played').style.display = "block";
-                    document.getElementById('remaining').style.display = "block";
-                    document.getElementById('resetButton').style.display = "block";
-                    playedNames = [];
-                    playedCount.textContent = playedNames.length;
-                    remainingCount.textContent = allNames.length - playedNames.length;
-                }
-            });
             const playSoundSwitch = document.getElementById('playSoundSwitch');
             playSoundSwitch.addEventListener('change', () => {
                 playSound = playSoundSwitch.checked;
@@ -289,11 +256,6 @@
     </script>
     <h1>点名器</h1>
     <div class="switch-container">
-        <label class="switch-label">不重复</label>
-        <label class="switch">
-            <input type="checkbox" id="noRepeatSwitch" checked>
-            <span class="slider round"></span>
-        </label>
         <label class="switch-label">播放声音</label>
         <label class="switch">
             <input type="checkbox" id="playSoundSwitch" checked>
