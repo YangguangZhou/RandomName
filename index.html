@@ -251,6 +251,7 @@
             // 检查浏览器是否支持Web Speech API
             if ('speechSynthesis' in window) {
                 canRead = true;
+                var utterance = new SpeechSynthesisUtterance();
             } else {
                 canRead = false;
                 alert('抱歉，你的浏览器不支持Web Speech API');
