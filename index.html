@@ -209,7 +209,7 @@
                         nameDisplay.textContent = randomName;
                         playedCount.textContent = playedNames.length;
                         remainingCount.textContent = allNames.length - playedNames.length;
-                        umami.track('RandomName', { name: randomName, played: playedNames.length, remain: allNames.length - playedNames.length });
+                        umami.track('RandomName', { name: randomName });
                     startButton.disabled = false;
                     startButton.classList.remove('disabled');
                     if (playSound) {
@@ -224,7 +224,7 @@
         }
 
         function resetRoll() {
-            umami.track('Reset', { played: playedNames.length, remain: allNames.length - playedNames.length });
+            umami.track('Reset', { played: playedNames.length });
             playedNames = [];
             const nameDisplay = document.getElementById('nameDisplay');
             nameDisplay.textContent = '';
