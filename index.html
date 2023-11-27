@@ -5,6 +5,7 @@
     <title>点名器</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="icon" href="favicon.png">
+    <script async src="https://umami.jerryz.com.cn/script.js" data-website-id="15460f1d-1366-4526-91e0-bd95960480d4"></script>
     <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;700&display=swap" rel="stylesheet">
     <style>
         body,
@@ -208,6 +209,7 @@
                         nameDisplay.textContent = randomName;
                         playedCount.textContent = playedNames.length;
                         remainingCount.textContent = allNames.length - playedNames.length;
+                        umami.track('RandomName', { name: randomName, played: playedNames.length, remain: allNames.length - playedNames.length });
                     startButton.disabled = false;
                     startButton.classList.remove('disabled');
                     if (playSound) {
@@ -222,6 +224,7 @@
         }
 
         function resetRoll() {
+            umami.track('Reset', { played: playedNames.length, remain: allNames.length - playedNames.length });
             playedNames = [];
             const nameDisplay = document.getElementById('nameDisplay');
             nameDisplay.textContent = '';
