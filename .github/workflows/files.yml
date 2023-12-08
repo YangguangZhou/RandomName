@@ -36,7 +36,8 @@ jobs:
       printf '%s\n' "${names[@]}" > names.txt
       printf '%s\n' "${speak[@]}" > speak.txt
    - name: Commit and push
-     uses: actions/checkout@v3
+     uses: ad-m/github-push-action@master
      with:
-       commit: true
-       push: true
+       branch: main
+       github_token: ${{ secrets.GITHUB_TOKEN }}
+       commit_message: "Randomize names and speak"
