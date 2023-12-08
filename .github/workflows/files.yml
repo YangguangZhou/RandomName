@@ -31,10 +31,11 @@ jobs:
        path: |
          names.txt
          speak.txt
-   - name: Write files and commit
+   - name: Write files
      run: |
-       printf '%s\n' "${names[@]}" > names.txt
-       printf '%s\n' "${speak[@]}" > speak.txt
+      printf '%s\n' "${names[@]}" > names.txt
+      printf '%s\n' "${speak[@]}" > speak.txt
+   - name: Commit and push
      uses: actions/checkout@v3
      with:
        commit: true
