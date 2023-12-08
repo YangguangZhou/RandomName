@@ -1,0 +1,41 @@
+name: Randomize names and speak
+on:
+ schedule:
+   - cron: '0 0 * * 1'
+ push:
+jobs:
+ randomize:
+   runs-on: ubuntu-latest
+   steps:
+   - name: Checkout repository
+     uses: actions/checkout@v3
+   - name: Read files
+     run: |
+       names=($(cat names.txt))
+       speak=($(cat speak.txt))
+   - name: Shuffle names and speak
+     run: |
+       for i in "${!names[@]}"; do
+         j=$((RANDOM % ${#names[@]}))
+         temp=${names[i]}
+         names[i]=${names[j]}
+         names[j]=$temp
+         temp=${speak[i]}
+         speak[i]=${speak[j]}
+         speak[j]=$temp
+       done
+   - name: Save original files
+     uses: actions/upload-artifact@v3
+     with:
+       name: Original Files
+       path: |
+         names.txt
+         speak.txt
+   - name: Write files and commit
+     run: |
+       printf '%s\n' "${names[@]}" > names.txt
+       printf '%s\n' "${speak[@]}" > speak.txt
+     uses: actions/checkout@v3
+     with:
+       commit: true
+       push: true
