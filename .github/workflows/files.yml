@@ -35,9 +35,14 @@ jobs:
      run: |
       printf '%s\n' "${names[@]}" > names.txt
       printf '%s\n' "${speak[@]}" > speak.txt
-   - name: Commit and push
+   - name: commit hexo源文件
+     run: |
+       git config --global user.name 'GitHub Action'
+       git config --global user.email 'i@jerryz.com.cn'
+       git add -A
+       git commit -m "Randomize names and speak"
+   - name: Push Files
      uses: ad-m/github-push-action@master
      with:
        branch: main
        github_token: ${{ secrets.GITHUB_TOKEN }}
-       commit_message: "Randomize names and speak"
