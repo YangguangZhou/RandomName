@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="icon" href="favicon.png">
     <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;700&display=swap" rel="stylesheet">
+    <script defer src="https://cloud.umami.is/script.js" data-website-id="f084f447-2dc4-4930-8ac4-c37cbf2b7f34"></script>
     <style>
         body,
         html {
@@ -208,6 +209,7 @@
                         nameDisplay.textContent = randomName;
                         playedCount.textContent = playedNames.length;
                         remainingCount.textContent = allNames.length - playedNames.length;
+                        umami.track('RandomName', { name: randomName });
                     startButton.disabled = false;
                     startButton.classList.remove('disabled');
                     if (playSound) {
@@ -223,6 +225,7 @@
 
         function resetRoll() {
             playedNames = [];
+            umami.track('Reset', { played: playedNames.length });
             const nameDisplay = document.getElementById('nameDisplay');
             nameDisplay.textContent = '';
             const resetButton = document.getElementById('resetButton');
