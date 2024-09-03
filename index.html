@@ -171,13 +171,29 @@
 
         // 朗读文本
         function speak(text) {
-            if (canRead) {
-                var utterance = new SpeechSynthesisUtterance();
-                utterance.text = text;
-                utterance.lang = 'zh-CN';
-                speechSynthesis.speak(utterance);
-            }
-        }
+  // 检查浏览器是否支持语音合成
+  if ('speechSynthesis' in window) {
+    // 创建一个新的 SpeechSynthesisUtterance 实例
+    var utterance = new SpeechSynthesisUtterance(text);
+    
+    // 设置语言
+    utterance.lang = 'zh-CN';
+    
+    // 在用户交互后触发语音合成
+    var speakButton = document.createElement('button');
+    speakButton.textContent = '播放语音';
+    speakButton.onclick = function() {
+      window.speechSynthesis.speak(utterance);
+    };
+    document.body.appendChild(speakButton);
+    
+    utterance.onerror = function(event) {
+      console.error('语音合成错误:', event);
+    };
+  } else {
+    console.log('当前浏览器不支持语音合成。');
+  }
+}
 
         // 开始滚动动画
         function startRolling() {
