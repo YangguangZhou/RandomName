@@ -180,12 +180,7 @@
     utterance.lang = 'zh-CN';
     
     // 在用户交互后触发语音合成
-    var speakButton = document.createElement('button');
-    speakButton.textContent = '播放语音';
-    speakButton.onclick = function() {
       window.speechSynthesis.speak(utterance);
-    };
-    document.body.appendChild(speakButton);
     
     utterance.onerror = function(event) {
       console.error('语音合成错误:', event);
