@@ -131,62 +131,7 @@
         input:checked+.slider:before {
             transform: translateX(22px);
         }
-
-        /* The Modal (background) */
-        .modal {
-            display: none;
-            position: fixed;
-            z-index: 1;
-            padding-top: 100px;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            overflow: auto;
-            background-color: rgba(0, 0, 0, 0.4);
-        }
-
-        /* Modal Content */
-        .modal-content {
-            background-color: #fefefe;
-            margin: auto;
-            padding: 20px;
-            border: 1px solid #888;
-            width: 80%;
-            max-height: 80%;
-            overflow-y: auto;
-        }
-
-        /* The Close Button */
-        .close {
-            color: #aaa;
-            float: right;
-            font-size: 28px;
-            font-weight: bold;
-            cursor: pointer;
-        }
-
-        .close:hover,
-        .close:focus {
-            color: black;
-            text-decoration: none;
-            cursor: pointer;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-
-        th,
-        td {
-            border: 1px solid #ddd;
-            padding: 8px;
-        }
-
-        th {
-            background-color: #f2f2f2;
-        }
+    </style>
     </style>
 </head>
 
@@ -196,24 +141,14 @@
         let playedNames = [];
         let allNames = [];
         let speakNames = [];
+        var canRead;
         const audio = new Audio('sound.mp3');
 
         // 读取名单文件
         async function readNames() {
             try {
-                const [namesResponse, speakResponse] = await Promise.all([
-                    fetch('names.txt'),
-                    fetch('speak.txt')
-                ]);
-
-                allNames = (await namesResponse.text()).split('\n');
-
-                if (speakResponse.ok) {
-                    speakNames = (await speakResponse.text()).split('\n');
-                } else {
-                    speakNames = allNames;
-                    console.log('无法找到speak.txt文件，使用names.txt代替');
-                }
+                const response1 = await fetch('names.txt');
+                allNames = (await response1.text()).split('\n');
             } catch (error) {
                 playedCount.textContent = "加载失败";
                 remainingCount.textContent = "加载失败";
@@ -221,7 +156,13 @@
                 resetButton.disabled = true;
                 return;
             }
-
+            try {
+                const response2 = await fetch('speak.txt');
+                speakNames = (await response2.text()).split('\n');
+            } catch (error) {
+                speakNames = allNames;
+                console.log('无法找到speak.txt文件，使用names.txt代替');
+            }
             const startButton = document.getElementById('startButton');
             startButton.addEventListener('click', () => startRolling());
             playedCount.textContent = playedNames.length;
@@ -230,18 +171,24 @@
 
         // 朗读文本
         function speak(text) {
-            if ('speechSynthesis' in window) {
-                var utterance = new SpeechSynthesisUtterance(text);
-                utterance.lang = 'zh-CN';
-                window.speechSynthesis.speak(utterance);
+  // 检查浏览器是否支持语音合成
+  if ('speechSynthesis' in window) {
+    // 创建一个新的 SpeechSynthesisUtterance 实例
+    var utterance = new SpeechSynthesisUtterance(text);
 
-                utterance.onerror = function (event) {
-                    console.error('语音合成错误:', event);
-                };
-            } else {
-                console.log('当前浏览器不支持语音合成。');
-            }
-        }
+    // 设置语言
+    utterance.lang = 'zh-CN';
+
+    // 在用户交互后触发语音合成
+      window.speechSynthesis.speak(utterance);
+
+    utterance.onerror = function(event) {
+      console.error('语音合成错误:', event);
+    };
+  } else {
+    console.log('当前浏览器不支持语音合成。');
+  }
+}
 
         // 开始滚动动画
         function startRolling() {
@@ -250,45 +197,32 @@
             const resetButton = document.getElementById('resetButton');
             startButton.disabled = true;
             startButton.classList.add('disabled');
-
             if (playedNames.length === allNames.length) {
-                nameDisplay.textContent = "所有人已点完";
+                nameDisplay.textContent = "已点完";
             } else {
                 if (playSound) {
                     audio.play();
                 }
-                let randomIndex, randomName;
+                let randomIndex, random
                 const rollInterval = setInterval(() => {
                     randomIndex = Math.floor(Math.random() * allNames.length);
                     randomName = allNames[randomIndex];
                     nameDisplay.textContent = randomName;
                 }, 40);
-
                 setTimeout(() => {
                     clearInterval(rollInterval);
-                    while (playedNames.includes(randomName)) {
-                        randomIndex = Math.floor(Math.random() * allNames.length);
-                        randomName = allNames[randomIndex];
-                    }
-                    playedNames.push(randomName);
-                    console.log(playedNames.length + " " + randomName);
-                    nameDisplay.textContent = randomName;
-                    playedCount.textContent = playedNames.length;
-                    remainingCount.textContent = allNames.length - playedNames.length;
+                        while (playedNames.includes(randomName)) {
+                            randomIndex = Math.floor(Math.random() * allNames.length);
+                            randomName = allNames[randomIndex];
+                        }
+                        playedNames.push(randomName);
+                        console.log(playedNames.length + " " + randomName);
+                        nameDisplay.textContent = randomName;
+                        playedCount.textContent = playedNames.length;
+                        remainingCount.textContent = allNames.length - playedNames.length;
+                       // umami.track('RandomName', { name: randomName });
                     startButton.disabled = false;
                     startButton.classList.remove('disabled');
-
-                    // 提取学号并发送GET请求
-                    const studentNumber = randomIndex + 1;
-                    const counterName = 'nameL7-' + studentNumber;
-                    fetch('https://counter-sever.jerryz.com.cn/counter?name=' + counterName)
-                        .then(response => {
-                            // 可以在这里处理响应
-                        })
-                        .catch(error => {
-                            console.error('发送计数请求失败:', error);
-                        });
-
                     if (playSound) {
                         audio.pause();
                         audio.currentTime = 0;
@@ -302,131 +236,14 @@
 
         function resetRoll() {
             playedNames = [];
+          //  umami.track('Reset', { played: playedNames.length });
             const nameDisplay = document.getElementById('nameDisplay');
             nameDisplay.textContent = '';
+            const resetButton = document.getElementById('resetButton');
             playedCount.textContent = playedNames.length;
             remainingCount.textContent = allNames.length - playedNames.length;
             startButton.disabled = false;
             startButton.classList.remove('disabled');
-        }
-
-        // 显示弹窗
-        function showPopup(studentList, title) {
-            const popup = document.getElementById('popup');
-            const popupTitle = document.getElementById('popupTitle');
-            const popupContent = document.getElementById('popupContent');
-            const closeBtn = document.querySelector('.close');
-
-            // 清空内容
-            popupContent.innerHTML = '';
-
-            // 设置标题
-            popupTitle.textContent = title;
-
-            // 创建表格
-            const table = document.createElement('table');
-            table.style.width = '100%';
-            table.style.borderCollapse = 'collapse';
-
-            // 表头
-            const headerRow = document.createElement('tr');
-            ['学号', '姓名', '点名次数'].forEach(text => {
-                const th = document.createElement('th');
-                th.textContent = text;
-                th.style.border = '1px solid #ddd';
-                th.style.padding = '8px';
-                th.style.backgroundColor = '#f2f2f2';
-                headerRow.appendChild(th);
-            });
-            table.appendChild(headerRow);
-
-            studentList.forEach(student => {
-                const row = document.createElement('tr');
-                [student.studentNumber, student.name, student.times].forEach(value => {
-                    const td = document.createElement('td');
-                    td.textContent = value;
-                    td.style.border = '1px solid #ddd';
-                    td.style.padding = '8px';
-                    row.appendChild(td);
-                });
-                table.appendChild(row);
-            });
-
-            popupContent.appendChild(table);
-
-            // 显示弹窗
-            popup.style.display = 'block';
-
-            // 关闭弹窗
-            closeBtn.onclick = function () {
-                popup.style.display = 'none';
-            };
-
-            // 点击弹窗外部关闭
-            window.onclick = function (event) {
-                if (event.target == popup) {
-                    popup.style.display = 'none';
-                }
-            };
-        }
-
-        // 显示未点名名单
-        function showRemainingNames() {
-            fetch('https://counter-sever.jerryz.com.cn/json')
-                .then(response => response.json())
-                .then(data => {
-                    const studentList = allNames.map((name, index) => {
-                        const studentNumber = index + 1;
-                        const counterName = 'nameL7-' + studentNumber;
-                        const studentData = data.find(item => item.name === counterName);
-                        const times = studentData ? studentData.times : 0;
-
-                        return {
-                            name: name,
-                            studentNumber: studentNumber,
-                            times: times
-                        };
-                    });
-
-                    // 排序
-                    studentList.sort((a, b) => a.studentNumber - b.studentNumber);
-
-                    showPopup(studentList, '未点名人数');
-                })
-                .catch(error => {
-                    console.error('无法获取点名次数数据:', error);
-                    alert('无法获取点名次数数据');
-                });
-        }
-
-        // 显示已点名名单
-        function showPlayedNames() {
-            fetch('https://counter-sever.jerryz.com.cn/json')
-                .then(response => response.json())
-                .then(data => {
-                    const playedList = playedNames.map(name => {
-                        const index = allNames.indexOf(name);
-                        const studentNumber = index + 1;
-                        const counterName = 'nameL7-' + studentNumber;
-                        const studentData = data.find(item => item.name === counterName);
-                        const times = studentData ? studentData.times : 0;
-
-                        return {
-                            name: name,
-                            studentNumber: studentNumber,
-                            times: times
-                        };
-                    });
-
-                    // 最近点过的在最上面
-                    playedList.reverse();
-
-                    showPopup(playedList, '已点名人数');
-                })
-                .catch(error => {
-                    console.error('无法获取点名次数数据:', error);
-                    alert('无法获取点名次数数据');
-                });
         }
 
         // 页面加载完成后执行
@@ -442,12 +259,12 @@
             });
             resetButton.addEventListener('click', resetRoll);
 
-            // 添加点击事件
-            document.getElementById('played').addEventListener('click', showPlayedNames);
-            document.getElementById('remaining').addEventListener('click', showRemainingNames);
-
             // 检查浏览器是否支持Web Speech API
-            if (!('speechSynthesis' in window)) {
+            if ('speechSynthesis' in window) {
+                canRead = true;
+                var utterance = new SpeechSynthesisUtterance();
+            } else {
+                canRead = false;
                 alert('抱歉，你的浏览器不支持Web Speech API');
             }
         });
@@ -466,17 +283,8 @@
     <button id="resetButton" style="display: block;">重置</button>
 
     <div class="count-container">
-        <span id="played" style="display: block; cursor: pointer;">已点名人数: <span id="playedCount">加载中...</span></span><br>
-        <span id="remaining" style="display: block; cursor: pointer;">未点名人数: <span id="remainingCount">加载中...</span></span>
-    </div>
-
-    <!-- 弹窗 -->
-    <div id="popup" class="modal">
-        <div class="modal-content">
-            <span class="close">&times;</span>
-            <h2 id="popupTitle"></h2>
-            <div id="popupContent"></div>
-        </div>
+        <span id="played" style="display: block;">已点名人数: <span id="playedCount">加载中...</span></span><br>
+        <span id="remaining" style="display: block;">未点名人数: <span id="remainingCount">加载中...</span></span>
     </div>
 </body>
 
