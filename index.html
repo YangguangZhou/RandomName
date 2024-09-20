@@ -278,12 +278,10 @@
                     startButton.disabled = false;
                     startButton.classList.remove('disabled');
 
-                    // 提取学号并发送GET请求
                     const studentNumber = randomIndex + 1;
                     const counterName = 'nameL7-' + studentNumber;
                     fetch('https://counter-sever.jerryz.com.cn/counter?name=' + counterName)
                         .then(response => {
-                            // 可以在这里处理响应
                         })
                         .catch(error => {
                             console.error('发送计数请求失败:', error);
