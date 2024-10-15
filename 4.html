@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>点名器</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="icon" href="favicon.png">
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body,
+        html {
+            height: 100%;
+            margin: 0;
+            overflow: hidden;
+        }
+
+        body {
+            background-color: #f5f5f5;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            overflow: hidden;
+            font-family: 'Open Sans', sans-serif;
+        }
+
+        h1 {
+            color: #222;
+            font-weight: bold;
+            font-size: 48px;
+        }
+
+        #nameDisplay {
+            font-size: 60px;
+            margin-top: 30px;
+        }
+
+        #startButton,
+        #resetButton {
+            background-color: #279cff;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 24px;
+            margin-top: 30px;
+            transition: all 0.2s ease-in-out;
+            border-radius: 10px;
+            cursor: pointer;
+        }
+
+        #startButton:active,
+        #resetButton:active {
+            transform: scale(0.95);
+        }
+
+        #startButton.disabled,
+        #resetButton.disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
+
+        .switch-container {
+            display: flex;
+            align-items: center;
+            margin-top: 20px;
+        }
+
+        .switch-label {
+            margin: 0 10px;
+            font-size: 24px;
+            font-weight: normal;
+        }
+
+        .count-container {
+            margin-top: 30px;
+            font-size: 24px;
+        }
+
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 30px;
+            margin-top: 3px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ddd;
+            transition: .4s;
+            border-radius: 15px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 22px;
+            width: 22px;
+            left: 3.25px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+
+        input:checked+.slider {
+            background-color: #279cff;
+        }
+
+        input:focus+.slider {
+            box-shadow: 0 0 1px #279cff;
+        }
+
+        input:checked+.slider:before {
+            transform: translateX(22px);
+        }
+    </style>
+</head>
+
+<body>
+    <script>
+        let playSound = true;
+        let playedNames = [];
+        let allNames = [];
+        var canRead;
+        const audio = new Audio('sound.mp3');
+
+        // 读取名单文件
+        function readNames() {
+            allNames = [
+                "周心翊", "王诗涵", "李依静", "王晨希", "江乙冉", "曹铭轩", "杨蕊嘉", 
+                "谢馨怡", "古欣灵", "靳子璇", "饶修菡", "魏郁颖", "张馨元", "王宣仪", 
+                "陈彦君", "杨瑾涵", "袁子矞", "王竞悦", "易夕琳", "王怡蓉", "张楚涵", 
+                "易子入", "熊樱", "谭可馨", "朱芳钰", "李正娟", "程丹阳", "杨雨馨", 
+                "金姝含", "李思颖", "奔峻恺", "余芊蓉", "胡贲睿", "赵俊源", "应开济", 
+                "袁志和", "李奕岑", "孙道志", "杨景然", "李昱锦", "王薪源", "王贤智"
+            ];
+            const startButton = document.getElementById('startButton');
+            startButton.addEventListener('click', () => startRolling());
+            playedCount.textContent = playedNames.length;
+            remainingCount.textContent = allNames.length - playedNames.length;
+        }
+
+        // 朗读文本
+        function speak(text) {
+            if (canRead) {
+                var utterance = new SpeechSynthesisUtterance();
+                utterance.text = text;
+                utterance.lang = 'zh-CN';
+                speechSynthesis.speak(utterance);
+            }
+        }
+
+        // 开始滚动动画
+        function startRolling() {
+            const nameDisplay = document.getElementById('nameDisplay');
+            const startButton = document.getElementById('startButton');
+            const resetButton = document.getElementById('resetButton');
+            startButton.disabled = true;
+            startButton.classList.add('disabled');
+            if (playedNames.length === allNames.length) {
+                nameDisplay.textContent = "已点完";
+            } else {
+                if (playSound) {
+                    audio.play();
+                }
+                let randomIndex, randomName;
+                const rollInterval = setInterval(() => {
+                    randomIndex = Math.floor(Math.random() * allNames.length);
+                    randomName = allNames[randomIndex];
+                    nameDisplay.textContent = randomName;
+                }, 40);
+                setTimeout(() => {
+                    clearInterval(rollInterval);
+                    while (playedNames.includes(randomName)) {
+                        randomIndex = Math.floor(Math.random() * allNames.length);
+                        randomName = allNames[randomIndex];
+                    }
+                    playedNames.push(randomName);
+                    nameDisplay.textContent = randomName;
+                    playedCount.textContent = playedNames.length;
+                    remainingCount.textContent = allNames.length - playedNames.length;
+                    startButton.disabled = false;
+                    startButton.classList.remove('disabled');
+                    if (playSound) {
+                        audio.pause();
+                        audio.currentTime = 0;
+                        setTimeout(() => speak(randomName), 200);
+                    }
+                }, Math.random() * 500 + 750);
+            }
+        }
+
+        function resetRoll() {
+            playedNames = [];
+            const nameDisplay = document.getElementById('nameDisplay');
+            nameDisplay.textContent = '';
+            playedCount.textContent = playedNames.length;
+            remainingCount.textContent = allNames.length - playedNames.length;
+            startButton.disabled = false;
+            startButton.classList.remove('disabled');
+        }
+
+        document.addEventListener('DOMContentLoaded', function () {
+            readNames();
+            const playSoundSwitch = document.getElementById('playSoundSwitch');
+            playSoundSwitch.addEventListener('change', () => {
+                playSound = playSoundSwitch.checked;
+                audio.pause();
+                audio.currentTime = 0;
+            });
+
+            if ('speechSynthesis' in window) {
+                canRead = true;
+            } else {
+                canRead = false;
+                alert('抱歉，你的浏览器不支持Web Speech API');
+            }
+        });
+    </script>
+
+    <h1>点名器</h1>
+    <div class="switch-container">
+        <label class="switch-label">播放声音</label>
+        <label class="switch">
+            <input type="checkbox" id="playSoundSwitch" checked>
+            <span class="slider round"></span>
+        </label>
+    </div>
+
+    <div id="nameDisplay"></div>
+    <button id="startButton">开始</button>
+    <button id="resetButton" style="display: block;">重置</button>
+
+    <div class="count-container">
+        <span id="played" style="display: block;">已点名人数: <span id="playedCount">加载中...</span></span><br>
+        <span id="remaining" style="display: block;">未点名人数: <span id="remainingCount">加载中...</span></span>
+    </div>
+</body>
+
+</html>
