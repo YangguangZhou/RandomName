@@ -143,14 +143,7 @@
 
         // 读取名单文件
         function readNames() {
-            allNames = [
-                "周心翊", "王诗涵", "李依静", "王晨希", "江乙冉", "曹铭轩", "杨蕊嘉", 
-                "谢馨怡", "古欣灵", "靳子璇", "饶修菡", "魏郁颖", "张馨元", "王宣仪", 
-                "陈彦君", "杨瑾涵", "袁子矞", "王竞悦", "易夕琳", "王怡蓉", "张楚涵", 
-                "易子入", "熊樱", "谭可馨", "朱芳钰", "李正娟", "程丹阳", "杨雨馨", 
-                "金姝含", "李思颖", "奔峻恺", "余芊蓉", "胡贲睿", "赵俊源", "应开济", 
-                "袁志和", "李奕岑", "孙道志", "杨景然", "李昱锦", "王薪源", "王贤智"
-            ];
+            allNames = ["周心翊", "王诗涵", "李依静", "王晨希", "江乙冉", "曹铭轩", "杨蕊嘉", "谢馨怡", "古欣灵", "靳子璇", "饶修菡", "魏郁颖", "张馨元", "王宣仪", "陈彦君", "杨瑾涵", "袁子矞", "王竞悦", "易夕琳", "王怡蓉", "张楚涵", "易子入", "熊樱", "谭可馨", "朱芳钰", "李正娟", "程丹阳", "杨雨馨", "金姝含", "李思颖", "奔峻恺", "余芊蓉", "胡贲睿", "赵俊源", "应开济", "袁志和", "李奕岑", "孙道志", "杨景然", "李昱锦", "王薪源", "王贤智"];
             const startButton = document.getElementById('startButton');
             startButton.addEventListener('click', () => startRolling());
             playedCount.textContent = playedNames.length;
@@ -193,6 +186,7 @@
                         randomName = allNames[randomIndex];
                     }
                     playedNames.push(randomName);
+                    console.log(playedNames.length + " " + randomName);
                     nameDisplay.textContent = randomName;
                     playedCount.textContent = playedNames.length;
                     remainingCount.textContent = allNames.length - playedNames.length;
@@ -201,7 +195,9 @@
                     if (playSound) {
                         audio.pause();
                         audio.currentTime = 0;
-                        setTimeout(() => speak(randomName), 200);
+                        setTimeout(function () {
+                            speak(randomName);
+                        }, 200);
                     }
                 }, Math.random() * 500 + 750);
             }
@@ -211,6 +207,7 @@
             playedNames = [];
             const nameDisplay = document.getElementById('nameDisplay');
             nameDisplay.textContent = '';
+            const resetButton = document.getElementById('resetButton');
             playedCount.textContent = playedNames.length;
             remainingCount.textContent = allNames.length - playedNames.length;
             startButton.disabled = false;
@@ -219,12 +216,15 @@
 
         document.addEventListener('DOMContentLoaded', function () {
             readNames();
+            const startButton = document.getElementById('startButton');
+            const resetButton = document.getElementById('resetButton');
             const playSoundSwitch = document.getElementById('playSoundSwitch');
             playSoundSwitch.addEventListener('change', () => {
                 playSound = playSoundSwitch.checked;
                 audio.pause();
                 audio.currentTime = 0;
             });
+            resetButton.addEventListener('click', resetRoll);
 
             if ('speechSynthesis' in window) {
                 canRead = true;
@@ -234,7 +234,6 @@
             }
         });
     </script>
-
     <h1>点名器</h1>
     <div class="switch-container">
         <label class="switch-label">播放声音</label>
