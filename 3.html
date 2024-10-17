@@ -363,7 +363,7 @@
                     // 遍历所有学生并显示点名次数
                     const rows = allNames.map((name, index) => {
                         const studentNumber = index + 1;
-                        const counterName = 'nameL7-' + studentNumber;
+                        const counterName = 'nameL3-' + studentNumber;
                         const studentData = data.find(item => item.name === counterName);
                         const times = studentData ? studentData.times : 0;
 
@@ -489,8 +489,8 @@
     <button id="resetButton" style="display: block;">重置</button>
 
     <div class="count-container">
-        <span id="played">已点名人数: <span id="playedCount">加载中...</span></span><br>
-        <span id="remaining">点名总次数: <span id="remainingCount">加载中...</span></span>
+        <span id="played" style="display: block; cursor: pointer;">已点名人数: <span id="playedCount">加载中...</span></span><br>
+        <span id="remaining" style="display: block; cursor: pointer;">点名总次数: <span id="remainingCount">加载中...</span></span>
     </div>
 
     <!-- 弹窗 -->
