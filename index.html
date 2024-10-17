@@ -132,73 +132,73 @@
             transform: translateX(22px);
         }
 
-        /* The Modal (background) */
+        /* 弹窗 (背景) */
         .modal {
             display: none;
             position: fixed;
             z-index: 1;
-            padding-top: 100px;
             left: 0;
             top: 0;
             width: 100%;
             height: 100%;
             overflow: auto;
             background-color: rgba(0, 0, 0, 0.4);
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
 
         /* Modal Content */
         .modal-content {
             background-color: #fefefe;
-            margin: auto;
             padding: 20px;
             border: 1px solid #888;
             width: 80%;
             max-height: 80%;
             overflow-y: auto;
-            position: relative; /* 确保内容相对于自身定位 */
+            position: relative;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
         }
 
         /* The Close Button */
         .close {
+            position: absolute;
+            top: -10px;
+            right: -10px;
             color: #aaa;
-            position: absolute; /* 绝对定位 */
-            top: 10px; /* 距离顶部 */
-            right: 20px; /* 距离右侧 */
             font-size: 28px;
             font-weight: bold;
+            background-color: #fefefe;
+            border: 1px solid #888;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            text-align: center;
+            line-height: 28px;
             cursor: pointer;
-            z-index: 2; /* 确保在最上层 */
+            box-shadow: 0 2px 5px rgba(0,0,0,0.3);
         }
 
         .close:hover,
         .close:focus {
             color: black;
             text-decoration: none;
-            cursor: pointer;
         }
 
         table {
-            width: 80%; /* 调整表格宽度 */
+            width: 100%;
             border-collapse: collapse;
-            margin: 20px auto; /* 居中表格 */
         }
 
         th,
         td {
             border: 1px solid #ddd;
             padding: 8px;
-            text-align: center; /* 表格内容居中 */
         }
 
         th {
             background-color: #f2f2f2;
-        }
-
-        /* 使弹窗内容居中 */
-        .modal-content {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
         }
     </style>
 </head>
@@ -219,10 +219,10 @@
                     fetch('speak.txt')
                 ]);
 
-                allNames = (await namesResponse.text()).split('\n').map(name => name.trim()).filter(name => name !== "");
-
+                allNames = (await namesResponse.text()).split('\n').map(name => name.trim()).filter(name => name);
+                
                 if (speakResponse.ok) {
-                    speakNames = (await speakResponse.text()).split('\n').map(name => name.trim()).filter(name => name !== "");
+                    speakNames = (await speakResponse.text()).split('\n').map(name => name.trim()).filter(name => name);
                 } else {
                     speakNames = allNames;
                     console.log('无法找到speak.txt文件，使用names.txt代替');
@@ -342,48 +342,64 @@
             ['学号', '姓名', '点名次数'].forEach(text => {
                 const th = document.createElement('th');
                 th.textContent = text;
-                headerRow.appendChild(th);
+                table.appendChild(th);
             });
             table.appendChild(headerRow);
 
             studentList.forEach(student => {
                 const row = document.createElement('tr');
-                [student.studentNumber, student.name, student.times].forEach(value => {
-                    const td = document.createElement('td');
-                    td.textContent = value;
-                    row.appendChild(td);
-                });
+                const tdNumber = document.createElement('td');
+                tdNumber.textContent = student.studentNumber || '-';
+                row.appendChild(tdNumber);
+
+                const tdName = document.createElement('td');
+                tdName.textContent = student.name || '-';
+                row.appendChild(tdName);
+
+                const tdTimes = document.createElement('td');
+                tdTimes.textContent = student.times;
+                row.appendChild(tdTimes);
+
                 table.appendChild(row);
             });
 
             popupContent.appendChild(table);
 
             // 显示弹窗
-            popup.style.display = 'block';
+            popup.style.display = 'flex';
+
+            // 关闭弹窗
+            closeBtn.onclick = function () {
+                popup.style.display = 'none';
+            };
+
+            // 点击弹窗外部关闭
+            window.onclick = function (event) {
+                if (event.target == popup) {
+                    popup.style.display = 'none';
+                }
+            };
         }
 
-        // 显示未点名名单（现为点名总次数）
+        // 显示未点名名单（现在用于显示点名总次数）
         function showRemainingNames() {
             fetch('https://counter-sever.jerryz.com.cn/json')
                 .then(response => response.json())
                 .then(data => {
-                    const totalTimes = data.reduce((sum, item) => sum + (item.times || 0), 0);
+                    // 计算所有以nameL7-开头的次数总和
+                    const totalTimes = data
+                        .filter(item => item.name.startsWith('nameL7-'))
+                        .reduce((sum, item) => sum + item.times, 0);
 
-                    // 创建一个包含所有学生信息的列表
-                    const studentList = allNames.map((name, index) => {
-                        const studentNumber = index + 1;
-                        const counterName = 'nameL7-' + studentNumber;
-                        const studentData = data.find(item => item.name === counterName);
-                        const times = studentData ? studentData.times : 0;
+                    // 创建一个显示总次数的对象
+                    const totalCount = [{
+                        studentNumber: '',
+                        name: '',
+                        times: totalTimes
+                    }];
 
-                        return {
-                            name: name,
-                            studentNumber: studentNumber,
-                            times: times
-                        };
-                    });
-
-                    showPopup(studentList, '点名总次数：' + totalTimes);
+                    // 显示弹窗
+                    showPopup(totalCount, '点名总次数：' + totalTimes);
                 })
                 .catch(error => {
                     console.error('无法获取点名次数数据:', error);
@@ -438,21 +454,6 @@
             document.getElementById('played').addEventListener('click', showPlayedNames);
             document.getElementById('remaining').addEventListener('click', showRemainingNames);
 
-            // 关闭弹窗的逻辑
-            const popup = document.getElementById('popup');
-            const closeBtn = document.querySelector('.close');
-
-            closeBtn.onclick = function () {
-                popup.style.display = 'none';
-            };
-
-            // 点击弹窗外部关闭
-            window.onclick = function (event) {
-                if (event.target == popup) {
-                    popup.style.display = 'none';
-                }
-            };
-
             // 检查浏览器是否支持Web Speech API
             if (!('speechSynthesis' in window)) {
                 alert('抱歉，你的浏览器不支持Web Speech API');
@@ -474,13 +475,13 @@
 
     <div class="count-container">
         <span id="played" style="display: block; cursor: pointer;">已点名人数: <span id="playedCount">加载中...</span></span><br>
-        <span id="remaining" style="display: block; cursor: pointer;">点名总次数: <span id="remainingCount">加载中...</span></span>
+        <span id="remaining" style="display: block; cursor: pointer;">未点名人数: <span id="remainingCount">加载中...</span></span>
     </div>
 
     <!-- 弹窗 -->
     <div id="popup" class="modal">
-        <span class="close">&times;</span> <!-- 将关闭按钮移动到弹窗外部 -->
         <div class="modal-content">
+            <span class="close">&times;</span>
             <h2 id="popupTitle"></h2>
             <div id="popupContent"></div>
         </div>
