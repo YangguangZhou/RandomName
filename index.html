@@ -80,6 +80,14 @@
         .count-container {
             margin-top: 30px;
             font-size: 24px;
+            text-align: left; /* 修改为左对齐 */
+            width: 80%; /* 设置宽度以避免过宽 */
+        }
+
+        .count-container span {
+            display: block;
+            cursor: pointer;
+            margin-bottom: 10px;
         }
 
         .switch {
@@ -137,35 +145,33 @@
             display: none;
             position: fixed;
             z-index: 1;
+            padding-top: 50px; /* 调整弹窗顶部距离 */
             left: 0;
             top: 0;
             width: 100%;
             height: 100%;
             overflow: auto;
             background-color: rgba(0, 0, 0, 0.4);
-
-            /* 使用Flexbox居中 */
-            display: flex;
-            justify-content: center;
-            align-items: center;
         }
 
         /* Modal Content */
         .modal-content {
             background-color: #fefefe;
+            margin: 0 auto; /* 水平居中 */
             padding: 20px;
             border: 1px solid #888;
             width: 80%;
             max-height: 80%;
             overflow-y: auto;
-            border-radius: 10px; /* 可选：增加圆角效果 */
-            box-shadow: 0 5px 15px rgba(0,0,0,0.3); /* 可选：增加阴影效果 */
+            position: relative;
         }
 
         /* The Close Button */
         .close {
             color: #aaa;
-            float: right;
+            position: absolute;
+            top: 10px;
+            right: 20px;
             font-size: 28px;
             font-weight: bold;
             cursor: pointer;
@@ -181,6 +187,7 @@
         table {
             width: 100%;
             border-collapse: collapse;
+            text-align: left; /* 设置表格内容左对齐 */
         }
 
         th,
@@ -229,6 +236,11 @@
 
             const startButton = document.getElementById('startButton');
             startButton.addEventListener('click', () => startRolling());
+            updateCounts();
+        }
+
+        // 更新已点名和未点名人数
+        function updateCounts() {
             document.getElementById('playedCount').textContent = playedNames.length;
             document.getElementById('remainingCount').textContent = allNames.length - playedNames.length;
         }
@@ -273,7 +285,7 @@
 
                 setTimeout(() => {
                     clearInterval(rollInterval);
-                    // 确保选中的名字未被点名
+                    // 防止重复
                     while (playedNames.includes(randomName)) {
                         randomIndex = Math.floor(Math.random() * allNames.length);
                         randomName = allNames[randomIndex];
@@ -281,8 +293,7 @@
                     playedNames.push(randomName);
                     console.log(playedNames.length + " " + randomName);
                     nameDisplay.textContent = randomName;
-                    document.getElementById('playedCount').textContent = playedNames.length;
-                    document.getElementById('remainingCount').textContent = allNames.length - playedNames.length;
+                    updateCounts();
                     startButton.disabled = false;
                     startButton.classList.remove('disabled');
 
@@ -290,7 +301,6 @@
                     const counterName = 'nameL7-' + studentNumber;
                     fetch('https://counter-sever.jerryz.com.cn/counter?name=' + counterName)
                         .then(response => {
-                            // 可以根据需要处理响应
                         })
                         .catch(error => {
                             console.error('发送计数请求失败:', error);
@@ -311,67 +321,27 @@
             playedNames = [];
             const nameDisplay = document.getElementById('nameDisplay');
             nameDisplay.textContent = '';
-            document.getElementById('playedCount').textContent = playedNames.length;
-            document.getElementById('remainingCount').textContent = allNames.length - playedNames.length;
-            document.getElementById('startButton').disabled = false;
-            document.getElementById('startButton').classList.remove('disabled');
+            updateCounts();
+            const startButton = document.getElementById('startButton');
+            startButton.disabled = false;
+            startButton.classList.remove('disabled');
         }
 
         // 显示弹窗
-        function showPopup(studentList, title) {
+        function showPopup(contentHTML, titleText) {
             const popup = document.getElementById('popup');
             const popupTitle = document.getElementById('popupTitle');
             const popupContent = document.getElementById('popupContent');
             const closeBtn = document.querySelector('.close');
 
-            // 清空内容
-            popupContent.innerHTML = '';
-
             // 设置标题
-            popupTitle.textContent = title;
+            popupTitle.innerHTML = titleText;
 
-            if (title.startsWith('点名总次数：')) {
-                // 仅显示总次数
-                const totalDiv = document.createElement('div');
-                totalDiv.style.fontSize = '24px';
-                totalDiv.style.marginTop = '20px';
-                totalDiv.textContent = studentList[0].times;
-                popupContent.appendChild(totalDiv);
-            } else {
-                // 创建表格
-                const table = document.createElement('table');
-                table.style.width = '100%';
-                table.style.borderCollapse = 'collapse';
-
-                // 表头
-                const headerRow = document.createElement('tr');
-                ['学号', '姓名', '点名次数'].forEach(text => {
-                    const th = document.createElement('th');
-                    th.textContent = text;
-                    th.style.border = '1px solid #ddd';
-                    th.style.padding = '8px';
-                    th.style.backgroundColor = '#f2f2f2';
-                    headerRow.appendChild(th);
-                });
-                table.appendChild(headerRow);
-
-                studentList.forEach(student => {
-                    const row = document.createElement('tr');
-                    [student.studentNumber, student.name, student.times].forEach(value => {
-                        const td = document.createElement('td');
-                        td.textContent = value;
-                        td.style.border = '1px solid #ddd';
-                        td.style.padding = '8px';
-                        row.appendChild(td);
-                    });
-                    table.appendChild(row);
-                });
-
-                popupContent.appendChild(table);
-            }
+            // 设置内容
+            popupContent.innerHTML = contentHTML;
 
             // 显示弹窗
-            popup.style.display = 'flex'; // 使用Flexbox显示
+            popup.style.display = 'block';
 
             // 关闭弹窗
             closeBtn.onclick = function () {
@@ -386,25 +356,60 @@
             };
         }
 
-        // 显示点名总次数
+        // 显示未点名总次数
         function showTotalCallCount() {
             fetch('https://counter-sever.jerryz.com.cn/json')
                 .then(response => response.json())
                 .then(data => {
-                    // 计算所有以'nameL7-'开头的人的点名次数总和
-                    const totalTimes = data
+                    // 计算所有以nameL7-开头的次数总和
+                    const totalCount = data
                         .filter(item => item.name.startsWith('nameL7-'))
                         .reduce((sum, item) => sum + item.times, 0);
 
-                    // 创建一个包含总次数的对象
-                    const totalList = [{
-                        studentNumber: '',
-                        name: '',
-                        times: totalTimes
-                    }];
+                    const title = `点名总次数：${totalCount}`;
 
-                    // 修改弹窗标题为“点名总次数：”
-                    showPopup(totalList, '点名总次数：' + totalTimes);
+                    // 创建表格
+                    const table = document.createElement('table');
+
+                    // 表头
+                    const headerRow = document.createElement('tr');
+                    ['学号', '姓名', '点名次数'].forEach(text => {
+                        const th = document.createElement('th');
+                        th.textContent = text;
+                        headerRow.appendChild(th);
+                    });
+                    table.appendChild(headerRow);
+
+                    // 遍历所有学生并显示点名次数
+                    const rows = allNames.map((name, index) => {
+                        const studentNumber = index + 1;
+                        const counterName = 'nameL7-' + studentNumber;
+                        const studentData = data.find(item => item.name === counterName);
+                        const times = studentData ? studentData.times : 0;
+
+                        const row = document.createElement('tr');
+
+                        const tdNumber = document.createElement('td');
+                        tdNumber.textContent = studentNumber;
+                        row.appendChild(tdNumber);
+
+                        const tdName = document.createElement('td');
+                        tdName.textContent = name;
+                        row.appendChild(tdName);
+
+                        const tdTimes = document.createElement('td');
+                        tdTimes.textContent = times;
+                        row.appendChild(tdTimes);
+
+                        return row;
+                    });
+
+                    rows.forEach(row => table.appendChild(row));
+
+                    // 将表格转换为HTML字符串
+                    const tableHTML = table.outerHTML;
+
+                    showPopup(tableHTML, title);
                 })
                 .catch(error => {
                     console.error('无法获取点名次数数据:', error);
@@ -434,7 +439,32 @@
                     // 最近点过的在最上面
                     playedList.reverse();
 
-                    showPopup(playedList, '已点名人数');
+                    // 创建表格
+                    const table = document.createElement('table');
+
+                    // 表头
+                    const headerRow = document.createElement('tr');
+                    ['学号', '姓名', '点名次数'].forEach(text => {
+                        const th = document.createElement('th');
+                        th.textContent = text;
+                        headerRow.appendChild(th);
+                    });
+                    table.appendChild(headerRow);
+
+                    playedList.forEach(student => {
+                        const row = document.createElement('tr');
+                        [student.studentNumber, student.name, student.times].forEach(value => {
+                            const td = document.createElement('td');
+                            td.textContent = value;
+                            row.appendChild(td);
+                        });
+                        table.appendChild(row);
+                    });
+
+                    const title = '已点名人数';
+                    const tableHTML = table.outerHTML;
+
+                    showPopup(tableHTML, title);
                 })
                 .catch(error => {
                     console.error('无法获取点名次数数据:', error);
@@ -455,7 +485,7 @@
             });
             resetButton.addEventListener('click', resetRoll);
 
-            // 修改事件绑定为新的函数
+            // 添加点击事件
             document.getElementById('played').addEventListener('click', showPlayedNames);
             document.getElementById('remaining').addEventListener('click', showTotalCallCount);
 
@@ -479,8 +509,8 @@
     <button id="resetButton" style="display: block;">重置</button>
 
     <div class="count-container">
-        <span id="played" style="display: block; cursor: pointer;">已点名人数: <span id="playedCount">加载中...</span></span><br>
-        <span id="remaining" style="display: block; cursor: pointer;">点名总次数: <span id="remainingCount">加载中...</span></span>
+        <span id="played">已点名人数: <span id="playedCount">加载中...</span></span>
+        <span id="remaining">点名总次数: <span id="remainingCount">加载中...</span></span>
     </div>
 
     <!-- 弹窗 -->
