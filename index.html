@@ -155,15 +155,19 @@
             width: 80%;
             max-height: 80%;
             overflow-y: auto;
+            position: relative; /* 确保内容相对于自身定位 */
         }
 
         /* The Close Button */
         .close {
             color: #aaa;
-            float: right;
+            position: absolute; /* 绝对定位 */
+            top: 10px; /* 距离顶部 */
+            right: 20px; /* 距离右侧 */
             font-size: 28px;
             font-weight: bold;
             cursor: pointer;
+            z-index: 2; /* 确保在最上层 */
         }
 
         .close:hover,
@@ -174,18 +178,27 @@
         }
 
         table {
-            width: 100%;
+            width: 80%; /* 调整表格宽度 */
             border-collapse: collapse;
+            margin: 20px auto; /* 居中表格 */
         }
 
         th,
         td {
             border: 1px solid #ddd;
             padding: 8px;
+            text-align: center; /* 表格内容居中 */
         }
 
         th {
             background-color: #f2f2f2;
+        }
+
+        /* 使弹窗内容居中 */
+        .modal-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
     </style>
 </head>
@@ -206,10 +219,10 @@
                     fetch('speak.txt')
                 ]);
 
-                allNames = (await namesResponse.text()).split('\n');
+                allNames = (await namesResponse.text()).split('\n').map(name => name.trim()).filter(name => name !== "");
 
                 if (speakResponse.ok) {
-                    speakNames = (await speakResponse.text()).split('\n');
+                    speakNames = (await speakResponse.text()).split('\n').map(name => name.trim()).filter(name => name !== "");
                 } else {
                     speakNames = allNames;
                     console.log('无法找到speak.txt文件，使用names.txt代替');
@@ -323,17 +336,12 @@
 
             // 创建表格
             const table = document.createElement('table');
-            table.style.width = '100%';
-            table.style.borderCollapse = 'collapse';
 
             // 表头
             const headerRow = document.createElement('tr');
             ['学号', '姓名', '点名次数'].forEach(text => {
                 const th = document.createElement('th');
                 th.textContent = text;
-                th.style.border = '1px solid #ddd';
-                th.style.padding = '8px';
-                th.style.backgroundColor = '#f2f2f2';
                 headerRow.appendChild(th);
             });
             table.appendChild(headerRow);
@@ -343,8 +351,6 @@
                 [student.studentNumber, student.name, student.times].forEach(value => {
                     const td = document.createElement('td');
                     td.textContent = value;
-                    td.style.border = '1px solid #ddd';
-                    td.style.padding = '8px';
                     row.appendChild(td);
                 });
                 table.appendChild(row);
@@ -354,25 +360,16 @@
 
             // 显示弹窗
             popup.style.display = 'block';
-
-            // 关闭弹窗
-            closeBtn.onclick = function () {
-                popup.style.display = 'none';
-            };
-
-            // 点击弹窗外部关闭
-            window.onclick = function (event) {
-                if (event.target == popup) {
-                    popup.style.display = 'none';
-                }
-            };
         }
 
-        // 显示未点名名单
+        // 显示未点名名单（现为点名总次数）
         function showRemainingNames() {
             fetch('https://counter-sever.jerryz.com.cn/json')
                 .then(response => response.json())
                 .then(data => {
+                    const totalTimes = data.reduce((sum, item) => sum + (item.times || 0), 0);
+
+                    // 创建一个包含所有学生信息的列表
                     const studentList = allNames.map((name, index) => {
                         const studentNumber = index + 1;
                         const counterName = 'nameL7-' + studentNumber;
@@ -386,10 +383,7 @@
                         };
                     });
 
-                    // 排序
-                    studentList.sort((a, b) => a.studentNumber - b.studentNumber);
-
-                    showPopup(studentList, '未点名人数');
+                    showPopup(studentList, '点名总次数：' + totalTimes);
                 })
                 .catch(error => {
                     console.error('无法获取点名次数数据:', error);
@@ -444,6 +438,21 @@
             document.getElementById('played').addEventListener('click', showPlayedNames);
             document.getElementById('remaining').addEventListener('click', showRemainingNames);
 
+            // 关闭弹窗的逻辑
+            const popup = document.getElementById('popup');
+            const closeBtn = document.querySelector('.close');
+
+            closeBtn.onclick = function () {
+                popup.style.display = 'none';
+            };
+
+            // 点击弹窗外部关闭
+            window.onclick = function (event) {
+                if (event.target == popup) {
+                    popup.style.display = 'none';
+                }
+            };
+
             // 检查浏览器是否支持Web Speech API
             if (!('speechSynthesis' in window)) {
                 alert('抱歉，你的浏览器不支持Web Speech API');
@@ -465,13 +474,13 @@
 
     <div class="count-container">
         <span id="played" style="display: block; cursor: pointer;">已点名人数: <span id="playedCount">加载中...</span></span><br>
-        <span id="remaining" style="display: block; cursor: pointer;">未点名人数: <span id="remainingCount">加载中...</span></span>
+        <span id="remaining" style="display: block; cursor: pointer;">点名总次数: <span id="remainingCount">加载中...</span></span>
     </div>
 
     <!-- 弹窗 -->
     <div id="popup" class="modal">
+        <span class="close">&times;</span> <!-- 将关闭按钮移动到弹窗外部 -->
         <div class="modal-content">
-            <span class="close">&times;</span>
             <h2 id="popupTitle"></h2>
             <div id="popupContent"></div>
         </div>
