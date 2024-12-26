@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>元旦特别版点名器</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="icon" href="favicon.png">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body, html {
+            height: 100%;
+            margin: 0;
+            overflow: hidden;
+            background: linear-gradient(135deg, #800000, #190a05);
+            font-family: 'Noto Sans SC', sans-serif;
+        }
+
+        .container {
+            position: relative;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            z-index: 1;
+        }
+
+        .lucky-clouds {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 56 28" width="56" height="28"><path fill="%23ffffff10" d="M56 26c-2.22 0-4.16-1.07-5.37-2.72-.28.27-.61.5-.99.68C47.93 26.5 44.93 28 41.6 28c-4.13 0-7.76-2.13-9.86-5.34C29.85 23.5 27.3 24 24.6 24c-3.03 0-5.8-1.12-7.94-2.97-1.36 1.86-3.54 3.07-6.01 3.07-4.14 0-7.5-3.36-7.5-7.5 0-1.64.53-3.16 1.43-4.39C1.62 11.77 0 9.72 0 7.3 0 3.27 3.27 0 7.3 0c2.72 0 5.08 1.49 6.34 3.7C15.57 2.63 17.7 2 20 2c2.61 0 5.03.84 7 2.26C28.98 1.64 32.3 0 36 0c3.91 0 7.39 1.81 9.66 4.63C47.06 3.59 49.04 3 51.2 3 56.46 3 56 7.87 56 8.57V26z"/></svg>') repeat-x;
+            animation: slide 60s linear infinite;
+            opacity: 0.3;
+        }
+
+        @keyframes slide {
+            from { background-position: 0 0; }
+            to { background-position: -100% 0; }
+        }
+
+        .lantern {
+            position: absolute;
+            width: 60px;
+            height: 80px;
+            background: radial-gradient(circle at 50% 50%, #ff4d4d, #cc0000);
+            border-radius: 30px;
+            box-shadow: 0 0 20px rgba(255, 0, 0, 0.5);
+            animation: swing 3s ease-in-out infinite;
+        }
+
+        .lantern::before {
+            content: '福';
+            position: absolute;
+            width: 100%;
+            text-align: center;
+            color: gold;
+            font-size: 24px;
+            top: 25%;
+        }
+
+        .lantern:nth-child(1) {
+            top: 10%;
+            left: 10%;
+            animation-delay: 0.5s;
+        }
+
+        .lantern:nth-child(2) {
+            top: 10%;
+            right: 10%;
+            animation-delay: 1s;
+        }
+
+        @keyframes swing {
+            0%, 100% { transform: rotate(-5deg); }
+            50% { transform: rotate(5deg); }
+        }
+
+        h1 {
+            color: #FFD700;
+            font-weight: bold;
+            font-size: 48px;
+            text-shadow: 0 0 10px rgba(255, 215, 0, 0.5),
+                         0 0 20px rgba(255, 215, 0, 0.3),
+                         0 0 30px rgba(255, 215, 0, 0.2);
+            margin-bottom: 40px;
+            background: linear-gradient(45deg, #FFD700, #FFA500);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            position: relative;
+        }
+
+        #nameDisplay {
+            font-size: 60px;
+            margin: 30px;
+            color: #fff;
+            text-shadow: 0 0 20px rgba(255, 255, 255, 0.8);
+            background: rgba(255, 255, 255, 0.15);
+            padding: 30px 60px;
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+            min-width: 300px;
+            min-height: 100px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid rgba(255, 215, 0, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        #nameDisplay.highlight {
+            transform: scale(1.1);
+            background: rgba(255, 215, 0, 0.2);
+            border-color: rgba(255, 215, 0, 0.8);
+        }
+
+        #startButton {
+            background: linear-gradient(45deg, #FFD700, #FF4500);
+            color: #fff;
+            border: none;
+            padding: 15px 50px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 24px;
+            margin-top: 30px;
+            transition: all 0.3s ease-in-out;
+            border-radius: 50px;
+            cursor: pointer;
+            font-weight: bold;
+            box-shadow: 0 0 20px rgba(255, 69, 0, 0.4);
+            position: relative;
+            overflow: hidden;
+        }
+
+        #startButton:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 30px rgba(255, 69, 0, 0.6);
+        }
+
+        #startButton:active {
+            transform: scale(0.95);
+        }
+
+        #startButton.disabled {
+            background: #666;
+            cursor: not-allowed;
+            box-shadow: none;
+        }
+
+        .snowflake {
+            position: absolute;
+            color: #fff;
+            font-size: 1em;
+            font-family: Arial;
+            text-shadow: 0 0 5px #000;
+        }
+
+        @keyframes snowfall {
+            0% {
+                transform: translateY(-10vh) translateX(0);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(100vh) translateX(100px);
+                opacity: 0;
+            }
+        }
+
+        .title-decoration {
+            font-size: 24px;
+            color: #FFD700;
+            margin: 0 10px;
+            display: inline-block;
+            animation: sparkle 1.5s ease-in-out infinite;
+        }
+
+        @keyframes sparkle {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.2); opacity: 0.8; }
+        }
+
+        .firework-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .firework {
+            position: absolute;
+            width: 5px;
+            height: 5px;
+            border-radius: 50%;
+            animation: explode 1s ease-out forwards;
+        }
+
+        @keyframes explode {
+            0% {
+                transform: translateY(100vh);
+                opacity: 1;
+            }
+            50% {
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(20vh);
+                opacity: 0;
+            }
+        }
+
+        .spark {
+            position: absolute;
+            width: 3px;
+            height: 3px;
+            border-radius: 50%;
+            animation: spark 1s ease-out forwards;
+        }
+
+        @keyframes spark {
+            0% {
+                transform: translate(0, 0) scale(1);
+                opacity: 1;
+            }
+            100% {
+                transform: translate(var(--tx), var(--ty)) scale(0);
+                opacity: 0;
+            }
+        }
+
+        .red-packet {
+            position: absolute;
+            width: 40px;
+            height: 60px;
+            background: #ff0000;
+            border-radius: 5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: gold;
+            font-weight: bold;
+            font-size: 20px;
+            animation: float 3s ease-in-out infinite;
+            box-shadow: 0 0 10px rgba(255, 0, 0, 0.5);
+        }
+
+        .red-packet:nth-child(1) { top: 20%; left: 20%; animation-delay: 0s; }
+        .red-packet:nth-child(2) { top: 20%; right: 20%; animation-delay: 0.5s; }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+        }
+    </style>
+</head>
+<body>
+    <div class="lucky-clouds"></div>
+    <div class="container">
+        <div class="lantern"></div>
+        <div class="lantern"></div>
+        <div class="red-packet">福</div>
+        <div class="red-packet">禄</div>
+        
+        <h1><span class="title-decoration">🎊</span>元旦特别版点名器<span class="title-decoration">🎊</span></h1>
+        <div id="nameDisplay"></div>
+        <button id="startButton">开始点名</button>
+    </div>
+    <div class="firework-container"></div>
+
+    <script>
+        let currentInterval = null;
+        let currentTimeout = null;
+
+        function createFirework() {
+            const fireworkContainer = document.querySelector('.firework-container');
+            const colors = ['#ff0', '#f0f', '#0ff', '#ff4500', '#7fff00'];
+            
+            // Create main firework
+            const x = Math.random() * window.innerWidth;
+            const firework = document.createElement('div');
+            firework.className = 'firework';
+            firework.style.left = x + 'px';
+            firework.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+            fireworkContainer.appendChild(firework);
+
+            // Create sparks
+            setTimeout(() => {
+                const sparkCount = 30;
+                for (let i = 0; i < sparkCount; i++) {
+                    const spark = document.createElement('div');
+                    spark.className = 'spark';
+                    spark.style.left = x + 'px';
+                    spark.style.top = '20vh';
+                    spark.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                    
+                    const angle = (i * 360 / sparkCount) * Math.PI / 180;
+                    const velocity = 100 + Math.random() * 50;
+                    spark.style.setProperty('--tx', Math.cos(angle) * velocity + 'px');
+                    spark.style.setProperty('--ty', Math.sin(angle) * velocity + 'px');
+                    
+                    fireworkContainer.appendChild(spark);
+                }
+            }, 500);
+
+            // Clean up
+            setTimeout(() => {
+                while (fireworkContainer.firstChild) {
+                    fireworkContainer.removeChild(fireworkContainer.firstChild);
+                }
+            }, 2000);
+        }
+
+        function createSnowflakes() {
+            const snowflakes = ['❄', '❅', '❆', '✧'];
+            const container = document.querySelector('.container');
+            
+            setInterval(() => {
+                const snowflake = document.createElement('div');
+                snowflake.className = 'snowflake';
+                snowflake.style.left = Math.random() * 100 + 'vw';
+                snowflake.style.animationDuration = Math.random() * 3 + 2 + 's';
+                snowflake.style.opacity = Math.random();
+                snowflake.innerHTML = snowflakes[Math.floor(Math.random() * snowflakes.length)];
+                snowflake.style.animation = 'snowfall linear';
+                snowflake.style.animationDuration = Math.random() * 3 + 2 + 's';
+                
+                container.appendChild(snowflake);
+                
+                setTimeout(() => {
+                    snowflake.remove();
+                }, 5000);
+            }, 200);
+        }
+
+        const audio = new Audio('sound.mp3');
+        
+        const allNames = [
+            "陈弈仁", "卿高翔", "朱子言", "万瑞辰", "刘宇", "付子灏", "陈思齐", "王周骏", 
+            "贺昱玮", "张晏阳", "周洋光", "高博杨", "吕焌华", "潘高锐", "吴嘉镱", "张哲瑀", 
+            "康陈琛", "汪轩羽", "钟心", "段景译", "陈思成", "沈乐", "李正灿", "武伯昂", 
+            "樊尉然", "李梓贤", "万昱成", "李昀臻", "何厚辰", "易畅", "黄胤淇", "吴昊宸", 
+            "胡恒搏", "尹致尧", "李叙徵", "王若锦", "徐德杉", "马昕玥", "孙婉宸", "周玥梦", 
+            "杨莞儿", "方异霖", "茹奕", "苏禹蒙", "钱然", "赵梓越", "李李滟", "郭思宜", 
+            "毛秋童", "李梓贝", "周瑾", "孔雯暄", "张语萱", "孟薇", "张程程", "肖雅月", "刘学万"
+        ];
+
+        function startRolling() {
+            // 如果正在进行上一次点名，先清除定时器
+            if (currentInterval) {
+                clearInterval(currentInterval);
+                currentInterval = null;
+            }
+            if (currentTimeout) {
+                clearTimeout(currentTimeout);
+                currentTimeout = null;
+            }
+
+            const nameDisplay = document.getElementById('nameDisplay');
+            const startButton = document.getElementById('startButton');
+            startButton.disabled = true;
+            startButton.classList.add('disabled');
+            nameDisplay.classList.remove('highlight');
+
+            // 播放声音
+            audio.currentTime = 0;
+            audio.play();
+
+            let randomName;
+            currentInterval = setInterval(() => {
+                randomName = allNames[Math.floor(Math.random() * allNames.length)];
+                nameDisplay.textContent = randomName;
+            }, 40);
+
+            // 随机时间停止滚动
+            currentTimeout = setTimeout(() => {
+                clearInterval(currentInterval);
+                currentInterval = null;
+                audio.pause();
+                audio.currentTime = 0;
+                nameDisplay.textContent = randomName;
+                nameDisplay.classList.add('highlight');
+                startButton.disabled = false;
+                startButton.classList.remove('disabled');
+
+                // 创建多个烟花
+                for (let i = 0; i < 5; i++) {
+                    setTimeout(() => {
+                        createFirework();
+                    }, i * 300);
+                }
+            }, Math.random() * 500 + 750);
+        }
+
+        // 页面加载完成后初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            const startButton = document.getElementById('startButton');
+            startButton.addEventListener('click', startRolling);
+            createSnowflakes();
+
+            // 初始烟花效果
+            setInterval(() => {
+                if (Math.random() < 0.3) { // 30%的概率创建烟花
+                    createFirework();
+                }
+            }, 2000);
+        });
+    </script>
+</body>
+</html>
