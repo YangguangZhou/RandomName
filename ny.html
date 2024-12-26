@@ -12,9 +12,75 @@
             height: 100%;
             margin: 0;
             overflow: hidden;
-            background: linear-gradient(135deg, #c3272b, #70181f);
+            background: linear-gradient(45deg,
+                    #c3272b, #97212b, #9f0000, #DC143C);
+            background-size: 400% 400%;
+            animation: gradientBG 15s ease infinite;
             font-family: 'Noto Sans SC', sans-serif;
         }
+
+        /* 添加渐变动画 */
+        @keyframes gradientBG {
+            0% {
+                background-position: 0% 50%;
+            }
+
+            50% {
+                background-position: 100% 50%;
+            }
+
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+
+        /* 添加星光效果 */
+        .stars {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            background: transparent;
+        }
+
+        .star {
+            position: absolute;
+            width: 2px;
+            height: 2px;
+            background: #fff;
+            border-radius: 50%;
+            opacity: 0;
+            animation: twinkle 1s infinite;
+        }
+
+        @keyframes twinkle {
+
+            0%,
+            100% {
+                opacity: 0;
+            }
+
+            50% {
+                opacity: 1;
+            }
+        }
+
+        /* 添加模糊光晕效果 */
+        .container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(circle at center,
+                    rgba(255, 255, 255, 0.1) 0%,
+                    rgba(255, 255, 255, 0) 70%);
+            pointer-events: none;
+        }
+
 
         .container {
             position: relative;
@@ -32,6 +98,7 @@
                 transform: translateY(100vh);
                 opacity: 1;
             }
+
             100% {
                 transform: translateY(20vh);
                 opacity: 1;
@@ -62,6 +129,7 @@
                 transform: translate(0, 0) scale(1);
                 opacity: 1;
             }
+
             100% {
                 transform: translate(var(--tx), var(--ty)) scale(0);
                 opacity: 0;
@@ -73,6 +141,7 @@
                 transform: translateY(-10vh) translateX(0);
                 opacity: 1;
             }
+
             100% {
                 transform: translateY(100vh) translateX(100px);
                 opacity: 0;
@@ -92,16 +161,19 @@
             from {
                 background-position: 0 0;
             }
+
             to {
                 background-position: -100% 0;
             }
         }
 
         @keyframes swing {
+
             0%,
             100% {
                 transform: rotate(-5deg);
             }
+
             50% {
                 transform: rotate(5deg);
             }
@@ -190,11 +262,13 @@
         }
 
         @keyframes sparkle {
+
             0%,
             100% {
                 transform: scale(1);
                 opacity: 1;
             }
+
             50% {
                 transform: scale(1.2);
                 opacity: 0.8;
@@ -214,6 +288,7 @@
 </head>
 
 <body>
+    <div class="stars"></div>
     <div class="container">
         <h1><span class="title-decoration"></span>🎊点名器🎊<span class="title-decoration"></span></h1>
         <div id="nameDisplay"></div>
@@ -290,7 +365,7 @@
             firework.style.left = x + 'px';
             firework.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
             fireworkContainer.appendChild(firework);
-            
+
 
             // 等火箭到达最高点后再绽放
             firework.addEventListener('animationend', () => {
@@ -346,10 +421,25 @@
             }, Math.random() * 800 + 1000);
         }
 
+        function createStars() {
+            const starsContainer = document.querySelector('.stars');
+            const starCount = 100;
+
+            for (let i = 0; i < starCount; i++) {
+                const star = document.createElement('div');
+                star.className = 'star';
+                star.style.left = `${Math.random() * 100}%`;
+                star.style.top = `${Math.random() * 100}%`;
+                star.style.animationDelay = `${Math.random() * 1}s`;
+                starsContainer.appendChild(star);
+            }
+        }
+
         document.addEventListener('DOMContentLoaded', function () {
             const startButton = document.getElementById('startButton');
             startButton.addEventListener('click', startRolling);
             createSnowflakes();
+            createStars();
         });
     </script>
 </body>
