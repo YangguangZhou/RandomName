@@ -12,7 +12,7 @@
             height: 100%;
             margin: 0;
             overflow: hidden;
-            background: linear-gradient(135deg, #aa1f1f, #330d0d);
+            background: linear-gradient(135deg, #c3272b, #70181f);
             font-family: 'Noto Sans SC', sans-serif;
         }
 
@@ -27,23 +27,81 @@
             z-index: 1;
         }
 
+        @keyframes ascend {
+            0% {
+                transform: translateY(100vh);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(20vh);
+                opacity: 1;
+            }
+        }
+
+        .firework {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+        }
+
+        .ascending {
+            animation: ascend 1.5s ease-out forwards;
+        }
+
+        .spark {
+            position: absolute;
+            width: 5px;
+            height: 5px;
+            animation: spark 1.5s ease-out forwards;
+            border-radius: 50%;
+        }
+
+        @keyframes spark {
+            0% {
+                transform: translate(0, 0) scale(1);
+                opacity: 1;
+            }
+            100% {
+                transform: translate(var(--tx), var(--ty)) scale(0);
+                opacity: 0;
+            }
+        }
+
+        @keyframes snowfall {
+            0% {
+                transform: translateY(-10vh) translateX(0);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(100vh) translateX(100px);
+                opacity: 0;
+            }
+        }
+
+        .snowflake {
+            color: #fff;
+            font-size: 2em;
+            font-family: Arial;
+            text-shadow: 0 0 5px #000;
+            position: fixed;
+            top: -50px;
+        }
+
         @keyframes slide {
             from {
                 background-position: 0 0;
             }
-
             to {
                 background-position: -100% 0;
             }
         }
 
         @keyframes swing {
-
             0%,
             100% {
                 transform: rotate(-5deg);
             }
-
             50% {
                 transform: rotate(5deg);
             }
@@ -123,27 +181,6 @@
             box-shadow: none;
         }
 
-        .snowflake {
-            color: #fff;
-            font-size: 1em;
-            font-family: Arial;
-            text-shadow: 0 0 5px #000;
-            position: fixed;
-            top: -20px;
-        }
-
-        @keyframes snowfall {
-            0% {
-                transform: translateY(-10vh) translateX(0);
-                opacity: 1;
-            }
-
-            100% {
-                transform: translateY(100vh) translateX(100px);
-                opacity: 0;
-            }
-        }
-
         .title-decoration {
             font-size: 24px;
             color: #FFD700;
@@ -153,13 +190,11 @@
         }
 
         @keyframes sparkle {
-
             0%,
             100% {
                 transform: scale(1);
                 opacity: 1;
             }
-
             50% {
                 transform: scale(1.2);
                 opacity: 0.8;
@@ -175,68 +210,12 @@
             pointer-events: none;
             z-index: 0;
         }
-
-        .firework {
-            position: absolute;
-            width: 10px;
-            height: 10px;
-            animation: explode 1.5s ease-out forwards;
-            border-radius: 50%;
-        }
-
-        @keyframes explode {
-            0% {
-                transform: translateY(100vh);
-                opacity: 1;
-            }
-
-            50% {
-                opacity: 1;
-            }
-
-            100% {
-                transform: translateY(20vh);
-                opacity: 0;
-            }
-        }
-
-        .spark {
-            position: absolute;
-            width: 5px;
-            height: 5px;
-            animation: spark 1.5s ease-out forwards;
-            border-radius: 50%;
-        }
-
-        @keyframes spark {
-            0% {
-                transform: translate(0, 0) scale(1);
-                opacity: 1;
-            }
-
-            100% {
-                transform: translate(var(--tx), var(--ty)) scale(0);
-                opacity: 0;
-            }
-        }
-
-        @keyframes float {
-
-            0%,
-            100% {
-                transform: translateY(0);
-            }
-
-            50% {
-                transform: translateY(-20px);
-            }
-        }
     </style>
 </head>
 
 <body>
     <div class="container">
-        <h1><span class="title-decoration">🎊</span>元旦特别版点名器<span class="title-decoration">🎊</span></h1>
+        <h1><span class="title-decoration"></span>🎊点名器🎊<span class="title-decoration"></span></h1>
         <div id="nameDisplay"></div>
         <button id="startButton">开始点名</button>
     </div>
@@ -246,47 +225,8 @@
         let currentInterval = null;
         let currentTimeout = null;
 
-        function createFirework() {
-            const fireworkContainer = document.querySelector('.firework-container');
-            const colors = ['#ff0', '#f0f', '#0ff', '#ff4500', '#7fff00'];
-
-            // Create main firework
-            const x = Math.random() * window.innerWidth;
-            const firework = document.createElement('div');
-            firework.className = 'firework';
-            firework.style.left = x + 'px';
-            firework.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
-            fireworkContainer.appendChild(firework);
-
-            // Create sparks
-            setTimeout(() => {
-                const sparkCount = 50; // 增加到50个火花
-                for (let i = 0; i < sparkCount; i++) {
-                    const spark = document.createElement('div');
-                    spark.className = 'spark';
-                    spark.style.left = x + 'px';
-                    spark.style.top = '20vh';
-                    spark.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
-
-                    const angle = (i * 360 / sparkCount) * Math.PI / 180;
-                    const velocity = 150 + Math.random() * 100; // 增加扩散范围
-                    spark.style.setProperty('--tx', Math.cos(angle) * velocity + 'px');
-                    spark.style.setProperty('--ty', Math.sin(angle) * velocity + 'px');
-
-                    fireworkContainer.appendChild(spark);
-                }
-            }, 1000);
-
-            // Clean up
-            setTimeout(() => {
-                while (fireworkContainer.firstChild) {
-                    fireworkContainer.removeChild(fireworkContainer.firstChild);
-                }
-            }, 3000); // 延长到3秒
-        }
-
         function createSnowflakes() {
-            const snowflakes = ['❄', '❅', '❆', '✧'];
+            const snowflakes = ['❄', '❅', '❆', '❉', '❊'];
             const container = document.querySelector('.container');
 
             setInterval(() => {
@@ -308,7 +248,6 @@
         }
 
         const audio = new Audio('sound.mp3');
-
         const allNames = [
             "陈弈仁", "卿高翔", "朱子言", "万瑞辰", "刘宇", "付子灏", "陈思齐", "王周骏",
             "贺昱玮", "张晏阳", "周洋光", "高博杨", "吕焌华", "潘高锐", "吴嘉镱", "张哲瑀",
@@ -319,8 +258,48 @@
             "毛秋童", "李梓贝", "周瑾", "孔雯暄", "张语萱", "孟薇", "张程程", "肖雅月", "刘学万"
         ];
 
+        function createSparks(x, fireworkContainer, topY) {
+            const colors = ['#ff0', '#f0f', '#0ff', '#ff4500', '#7fff00'];
+            const sparkCount = 50;
+            for (let i = 0; i < sparkCount; i++) {
+                const spark = document.createElement('div');
+                spark.className = 'spark';
+                spark.style.left = x + 'px';
+                spark.style.top = topY + 'px';
+                spark.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+
+                const angle = (i * 360 / sparkCount) * Math.PI / 180;
+                const velocity = 150 + Math.random() * 100;
+                spark.style.setProperty('--tx', Math.cos(angle) * velocity + 'px');
+                spark.style.setProperty('--ty', Math.sin(angle) * velocity + 'px');
+
+                fireworkContainer.appendChild(spark);
+
+                spark.addEventListener('animationend', () => {
+                    spark.remove();
+                });
+            }
+        }
+
+        function createFirework() {
+            const colors = ['#ff0', '#f0f', '#0ff', '#ff4500', '#7fff00'];
+            const fireworkContainer = document.querySelector('.firework-container');
+            const x = Math.random() * window.innerWidth;
+            const firework = document.createElement('div');
+            firework.className = 'firework ascending';
+            firework.style.left = x + 'px';
+            firework.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+            fireworkContainer.appendChild(firework);
+            
+
+            // 等火箭到达最高点后再绽放
+            firework.addEventListener('animationend', () => {
+                createSparks(x, fireworkContainer, window.innerHeight * 0.2);
+                firework.remove();
+            });
+        }
+
         function startRolling() {
-            // 如果正在进行上一次点名，先清除定时器
             if (currentInterval) {
                 clearInterval(currentInterval);
                 currentInterval = null;
@@ -336,21 +315,17 @@
             startButton.classList.add('disabled');
             nameDisplay.classList.remove('highlight');
 
-            // 播放声音
             audio.currentTime = 0;
             audio.play();
 
             console.log(`总人数：${allNames.length}人`);
 
-            let selectedNames = [];
             let randomName;
             currentInterval = setInterval(() => {
                 randomName = allNames[Math.floor(Math.random() * allNames.length)];
                 nameDisplay.textContent = randomName;
-                // console.log(`正在抽取...${randomName}`);
             }, 40);
 
-            // 随机时间停止滚动
             currentTimeout = setTimeout(() => {
                 clearInterval(currentInterval);
                 currentInterval = null;
@@ -361,7 +336,6 @@
                 startButton.disabled = false;
                 startButton.classList.remove('disabled');
                 console.log(`✨ 抽中：${randomName}`);
-                selectedNames.push(randomName);
 
                 // 创建更多烟花
                 for (let i = 0; i < 8; i++) {
@@ -372,18 +346,10 @@
             }, Math.random() * 800 + 1000);
         }
 
-        // 页面加载完成后初始化
         document.addEventListener('DOMContentLoaded', function () {
             const startButton = document.getElementById('startButton');
             startButton.addEventListener('click', startRolling);
             createSnowflakes();
-
-            // // 初始烟花效果
-            // setInterval(() => {
-            //     if (Math.random() < 0.3) { // 30%的概率创建烟花
-            //         createFirework();
-            //     }
-            // }, 2000);
         });
     </script>
 </body>
