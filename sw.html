@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>点名器</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="icon" href="favicon.png">
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;700&display=swap" rel="stylesheet">
+
+    <style>
+        body,
+        html {
+            height: 100%;
+            margin: 0;
+            overflow: hidden;
+        }
+
+        body {
+            background-color: #f5f5f5;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            overflow: hidden;
+            font-family: 'Open Sans', sans-serif;
+        }
+
+        h1 {
+            color: #222;
+            font-weight: bold;
+            font-size: 48px;
+        }
+
+        #nameDisplay {
+            font-size: 60px;
+            margin-top: 30px;
+        }
+
+        #startButton,
+        #resetButton {
+            background-color: #279cff;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 24px;
+            margin-top: 30px;
+            transition: all 0.2s ease-in-out;
+            border-radius: 10px;
+            cursor: pointer;
+        }
+
+        #startButton:active,
+        #resetButton:active {
+            transform: scale(0.95);
+        }
+
+        #startButton.disabled,
+        #resetButton.disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
+
+        .switch-container {
+            display: flex;
+            align-items: center;
+            margin-top: 20px;
+        }
+
+        .switch-label {
+            margin: 0 10px;
+            font-size: 24px;
+            font-weight: normal;
+        }
+
+        .count-container {
+            margin-top: 30px;
+            font-size: 24px;
+            text-align: center;
+        }
+
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 30px;
+            margin-top: 3px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ddd;
+            transition: .4s;
+            border-radius: 15px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 22px;
+            width: 22px;
+            left: 3.25px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+
+        input:checked+.slider {
+            background-color: #279cff;
+        }
+
+        input:focus+.slider {
+            box-shadow: 0 0 1px #279cff;
+        }
+
+        input:checked+.slider:before {
+            transform: translateX(22px);
+        }
+    </style>
+</head>
+
+<body>
+    <script>
+        let playSound = true;
+        let playedNames = [];
+        let allNames = [
+            "1 叶峻成", "2 生颜语", "3 马思佳", "4 陈涛", "5 彭静",
+            "6 唐正全", "7 李秋云", "8 周曾虎", "9 吴旭", "10 陈源",
+            "11 徐劲豪", "12 李迪", "13 高统原", "14 角洪羽", "15 王佳涛",
+            "16 曹皓陇", "17 雷正旺", "18 王文龙", "19 李心灵", "20 罗贵明",
+            "21 赵雪", "22 郑鑫鑫", "23 代玉琳", "24 杜盈盈", "25 何云峰",
+            "26 胡蓉", "27 李锐", "28 李烨", "29 梁秀仙", "30 刘凯蝶",
+            "31 卢加丽", "32 王进", "33 王永换", "34 吴昊霖", "35 杨富强",
+            "36 杨旭", "37 余玉娇", "38 禹晓凤", "39 赵俊超", "40 钟润晴",
+            "41 周镐", "42 祝孝天"
+        ];
+        let speakNames = [...allNames];
+        const audio = new Audio('sound.mp3');
+
+        // 初始化
+        function readNames() {
+            const startButton = document.getElementById('startButton');
+            startButton.addEventListener('click', () => startRolling());
+            updateCounts();
+        }
+
+        // 更新已点名和未点名人数
+        function updateCounts() {
+            document.getElementById('playedCount').textContent = playedNames.length;
+            document.getElementById('remainingCount').textContent = allNames.length - playedNames.length;
+        }
+
+        // 朗读文本
+        function speak(text) {
+            if ('speechSynthesis' in window) {
+                var utterance = new SpeechSynthesisUtterance(text);
+                utterance.lang = 'zh-CN';
+                window.speechSynthesis.speak(utterance);
+
+                utterance.onerror = function (event) {
+                    console.error('语音合成错误:', event);
+                };
+            } else {
+                console.log('当前浏览器不支持语音合成。');
+            }
+        }
+
+        // 开始滚动动画
+        function startRolling() {
+            const nameDisplay = document.getElementById('nameDisplay');
+            const startButton = document.getElementById('startButton');
+            const resetButton = document.getElementById('resetButton');
+            startButton.disabled = true;
+            startButton.classList.add('disabled');
+
+            if (playedNames.length === allNames.length) {
+                nameDisplay.textContent = "所有人已点完";
+                startButton.disabled = true;
+                startButton.classList.add('disabled');
+            } else {
+                if (playSound) {
+                    audio.play();
+                }
+                let randomIndex, randomName;
+                const rollInterval = setInterval(() => {
+                    randomIndex = Math.floor(Math.random() * allNames.length);
+                    randomName = allNames[randomIndex];
+                    nameDisplay.textContent = randomName;
+                }, 40);
+
+                setTimeout(() => {
+                    clearInterval(rollInterval);
+                    // 防止重复
+                    while (playedNames.includes(randomName)) {
+                        randomIndex = Math.floor(Math.random() * allNames.length);
+                        randomName = allNames[randomIndex];
+                    }
+                    playedNames.push(randomName);
+                    console.log(playedNames.length + " " + randomName);
+                    nameDisplay.textContent = randomName;
+                    updateCounts();
+                    startButton.disabled = false;
+                    startButton.classList.remove('disabled');
+
+                    if (playSound) {
+                        audio.pause();
+                        audio.currentTime = 0;
+                        setTimeout(function () {
+                            speak(speakNames[randomIndex]);
+                        }, 200);
+                    }
+                }, Math.random() * 500 + 750);
+            }
+        }
+
+        function resetRoll() {
+            playedNames = [];
+            const nameDisplay = document.getElementById('nameDisplay');
+            nameDisplay.textContent = '';
+            updateCounts();
+            const startButton = document.getElementById('startButton');
+            startButton.disabled = false;
+            startButton.classList.remove('disabled');
+        }
+
+        // 显示弹窗
+        function showPopup(contentHTML, titleText) {
+            const popup = document.getElementById('popup');
+            const popupTitle = document.getElementById('popupTitle');
+            const popupContent = document.getElementById('popupContent');
+            const closeBtn = document.querySelector('.close');
+
+            // 设置标题
+            popupTitle.innerHTML = titleText;
+
+            // 设置内容
+            popupContent.innerHTML = contentHTML;
+
+            // 显示弹窗
+            popup.style.display = 'block';
+
+            // 关闭弹窗
+            closeBtn.onclick = function () {
+                popup.style.display = 'none';
+            };
+
+            // 点击弹窗外部关闭
+            window.onclick = function (event) {
+                if (event.target == popup) {
+                    popup.style.display = 'none';
+                }
+            };
+        }
+
+        // 页面加载完成后执行
+        document.addEventListener('DOMContentLoaded', function () {
+            readNames();
+            const startButton = document.getElementById('startButton');
+            const resetButton = document.getElementById('resetButton');
+            const playSoundSwitch = document.getElementById('playSoundSwitch');
+            playSoundSwitch.addEventListener('change', () => {
+                playSound = playSoundSwitch.checked;
+                audio.pause();
+                audio.currentTime = 0;
+            });
+            resetButton.addEventListener('click', resetRoll);
+
+            // 检查浏览器是否支持Web Speech API
+            if (!('speechSynthesis' in window)) {
+                alert('抱歉，你的浏览器不支持Web Speech API');
+            }
+        });
+    </script>
+    <h1>点名器</h1>
+    <div class="switch-container">
+        <label class="switch-label">播放声音</label>
+        <label class="switch">
+            <input type="checkbox" id="playSoundSwitch" checked>
+            <span class="slider round"></span>
+        </label>
+    </div>
+
+    <div id="nameDisplay"></div>
+    <button id="startButton">开始</button>
+    <button id="resetButton" style="display: block;">重置</button>
+
+    <div class="count-container">
+        <span id="played" style="display: block; cursor: pointer;">已点名人数: <span
+                id="playedCount">加载中...</span></span><br>
+        <span id="remaining" style="display: block; cursor: pointer;">未点名人数: <span
+                id="remainingCount">加载中...</span></span>
+    </div>
+</body>
+
+</html>
